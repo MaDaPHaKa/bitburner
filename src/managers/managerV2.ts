@@ -27,7 +27,7 @@ export async function main(ns: NS) {
   ns.disableLog("exec");
   if (debug) ns.tail();
   const servers: string[] = ns.getPurchasedServers();
-  servers.push("home");
+  servers.unshift("home");
   const serverManager: ServerManager = new ServerManager(ns, servers);
   while (true) {
     const allTargets: string[] = await new FileHandler(
