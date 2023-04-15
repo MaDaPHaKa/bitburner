@@ -1,10 +1,10 @@
 import { NS } from "@ns";
 import {
-  MONO_SCRIPT_PATH,
   SERVER_GROW_SCRIPT_NAME,
   SERVER_HACK_SCRIPT_NAME,
   SERVER_WEAKEN_SCRIPT_NAME,
   SERVER_WEAKEN_V2_SCRIPT_NAME,
+  XP_FARMER_SERVER_NAME,
 } from "const/files";
 import { ServerInfo } from "utils/server-info";
 import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
@@ -33,7 +33,9 @@ export async function main(ns: NS) {
     //checkServer(ns, servers, 'srv-8');
     //checkServer(ns, servers, 'srv-9');
     //checkServer(ns, servers, 'srv-10');
-    const servers = ns.getPurchasedServers().filter((el) => el != "home");
+    const servers = ns
+      .getPurchasedServers()
+      .filter((el) => el != "home" && el != XP_FARMER_SERVER_NAME);
     let i = 0;
     for (let server of servers) {
       checkServerSingoloTarget(ns, ordinati[i], server);
@@ -79,41 +81,24 @@ function checkServer(ns: NS, servers: string[], host: string) {
     const moneyThresh = ns.getServerMaxMoney(server);
     if (ns.getServerUsedRam(host) > 0) {
       if (!secOk) {
-        checkAndKillScriptHost(
-          ns,
-          host,
-          server,
-          MONO_SCRIPT_PATH + SERVER_GROW_SCRIPT_NAME,
-          [moneyThresh]
-        );
+        checkAndKillScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [
+          moneyThresh,
+        ]);
       } else continue;
     }
     const serverMoney = ns.getServerMoneyAvailable(server);
 
     if (!secOk) {
-      startScriptHost(
-        ns,
-        host,
-        server,
-        MONO_SCRIPT_PATH + SERVER_WEAKEN_SCRIPT_NAME,
-        [securityThresh]
-      );
+      startScriptHost(ns, host, server, SERVER_WEAKEN_SCRIPT_NAME, [
+        securityThresh,
+      ]);
     } else if (serverMoney < moneyThresh) {
-      startScriptHost(
-        ns,
-        host,
-        server,
-        MONO_SCRIPT_PATH + SERVER_GROW_SCRIPT_NAME,
-        [moneyThresh]
-      );
+      startScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [moneyThresh]);
     } else {
-      startScriptHost(
-        ns,
-        host,
-        server,
-        MONO_SCRIPT_PATH + SERVER_HACK_SCRIPT_NAME,
-        [securityThresh, moneyThresh]
-      );
+      startScriptHost(ns, host, server, SERVER_HACK_SCRIPT_NAME, [
+        securityThresh,
+        moneyThresh,
+      ]);
     }
   }
 }
@@ -127,35 +112,25 @@ function checkServerSingoloTarget(ns: NS, target: string, server: string) {
   const securityThreshScript = securityThresh;
   //	if (ns.getServerUsedRam(host) > 0) {
   //		if (serverSec < securityThreshScript) {
-  //			checkAndKillScriptHost(ns, host, server, MONO_SCRIPT_PATH + SERVER_GROW_SCRIPT_NAME, [securityThreshScript])
+  //			checkAndKillScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [securityThreshScript])
   //		} else
   //			return;
   //	}
   const serverMoney = ns.getServerMoneyAvailable(target);
   if (!secOk) {
-    startScriptHost(
-      ns,
-      server,
-      target,
-      MONO_SCRIPT_PATH + SERVER_WEAKEN_SCRIPT_NAME,
-      [securityThresh]
-    );
+    startScriptHost(ns, server, target, SERVER_WEAKEN_SCRIPT_NAME, [
+      securityThresh,
+    ]);
   } else if (serverMoney < moneyThresh) {
-    startScriptHost(
-      ns,
-      server,
-      target,
-      MONO_SCRIPT_PATH + SERVER_GROW_SCRIPT_NAME,
-      [moneyThresh, securityThreshScript]
-    );
+    startScriptHost(ns, server, target, SERVER_GROW_SCRIPT_NAME, [
+      moneyThresh,
+      securityThreshScript,
+    ]);
   } else {
-    startScriptHost(
-      ns,
-      server,
-      target,
-      MONO_SCRIPT_PATH + SERVER_HACK_SCRIPT_NAME,
-      [securityThreshScript, moneyThresh]
-    );
+    startScriptHost(ns, server, target, SERVER_HACK_SCRIPT_NAME, [
+      securityThreshScript,
+      moneyThresh,
+    ]);
   }
 }
 

@@ -3,7 +3,8 @@ import {
   PREP_SERVER_GROW_SCRIPT,
   PREP_SERVER_HACK_SCRIPT,
   PREP_SERVER_WEAKEN_SCRIPT,
-  SERVER_WEAKEN_V2_SCRIPT_NAME
+  SERVER_WEAKEN_V2_SCRIPT_NAME,
+  XP_FARMER_SERVER_NAME,
 } from "const/files";
 import * as calculators from "utils/calculation-utils";
 import { ServerInfo } from "utils/server-info";
@@ -24,11 +25,16 @@ export async function main(ns: NS) {
   ns.disableLog("getHackingLevel");
   ns.disableLog("exec");
   if (debug) ns.tail();
-  const servers: string[] = ns.getPurchasedServers();
+  const servers: string[] = ns
+    .getPurchasedServers()
+    .filter((el) => el != XP_FARMER_SERVER_NAME);
   servers.unshift("home");
   const serverManager: ServerManager = new ServerManager(ns, servers);
   while (true) {
     const allTargets: string[] = await loadTargetNames(ns);
+    // if not debug mode start "weakmyself" process on each target
+    if (!debug) checkAutoWeak(ns, allTargets);
+
     const targetInfo: ServerInfo[] = (
       (await loadTargetInfo(ns)) as ServerInfo[]
     ).filter((el) => el.cheesyScoreTest > 0);
@@ -61,7 +67,6 @@ export async function main(ns: NS) {
         if (!serverManager.serverLiberi()) break;
       }
     }
-    if (!debug) checkAutoWeak(ns, allTargets);
     await ns.sleep(5000);
     if (debug) break;
   }

@@ -21,7 +21,7 @@ export class HwgOpsCalulator {
     return this.growtTimeInternal();
   }
 
-  calcolaThreadWeak(cores: number = 1) {
+  calcolaWeakThread(cores: number = 1) {
     const currentSec = this.ns.getServerSecurityLevel(this.target.name);
     const secWeak = this.ns.weakenAnalyze(1, cores);
     const rate = (currentSec - this.target.minSecurity) / secWeak;
@@ -32,7 +32,7 @@ export class HwgOpsCalulator {
     return this.weakTimeInternal();
   }
 
-  calcolaThreadHack() {
+  calcolaHackThread() {
     const maxMoney = this.target.maxMoney;
     const moneyPerThread =
       (this.hasFormulas

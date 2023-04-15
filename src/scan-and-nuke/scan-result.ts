@@ -1,5 +1,5 @@
 import { NS } from "@ns";
-import { SERVER_NAME_PREFIX } from "/const/files";
+import { SERVER_NAME_PREFIX } from "const/files";
 
 export class ScanResult {
   ns: NS;

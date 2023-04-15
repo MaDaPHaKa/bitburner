@@ -15,4 +15,5 @@ export async function main(ns: NS) {
 		//ns.tprint('dry run buy');
 		ns.purchaseServer('srv-' + (count + 1), SERVER_GB);
 	}
+	ns.spawn('/prep/prep-servers.js');
 }

@@ -3,11 +3,10 @@ import {
   CHEESY_SERVER_GROW_SCRIPT,
   CHEESY_SERVER_HACK_SCRIPT,
   CHEESY_SERVER_WEAKEN_SCRIPT,
-  SERVERS_DETAIL_FILENAME,
-} from "/const/files";
-import { FileHandler } from "/files/filehandler";
-import { ServerInfo } from "/utils/server-info";
-import { loadTargetInfo } from "/utils/target-loader";
+  XP_FARMER_SERVER_NAME,
+} from "const/files";
+import { ServerInfo } from "utils/server-info";
+import { loadTargetInfo } from "utils/target-loader";
 
 /** @param {NS} ns **/
 export async function main(ns: NS) {
@@ -55,7 +54,7 @@ export async function main(ns: NS) {
     //const PRIME_TARGET = "foodnstuff";
 
     // For this manager we only use home + purchased servers. Other servers have almost no RAM.
-    let servers = ns.getPurchasedServers();
+    let servers = ns.getPurchasedServers().filter((el) => el != XP_FARMER_SERVER_NAME);;
     servers = servers.concat("home");
 
     // If we are so early in the game that we can't even effectively farm ALL servers...
