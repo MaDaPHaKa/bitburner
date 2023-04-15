@@ -18,9 +18,6 @@ export const XP_FARM_SCRIPT_NAME = "/mono/xp-farm-weaken.js";
 export const PREP_SERVER_WEAKEN_SCRIPT = "/prep/weak.js";
 export const PREP_SERVER_GROW_SCRIPT = "/prep/grow.js";
 export const PREP_SERVER_HACK_SCRIPT = "/prep/hack.js";
-export const CHEESY_SERVER_WEAKEN_SCRIPT = "/cheesy/weak.js";
-export const CHEESY_SERVER_GROW_SCRIPT = "/cheesy/grow.js";
-export const CHEESY_SERVER_HACK_SCRIPT = "/cheesy/hack.js";
 export const HWGW_SERVER_WEAKEN_SCRIPT = "/hwgw/weak.js";
 export const HWGW_SERVER_GROW_SCRIPT = "/hwgw/grow.js";
 export const HWGW_SERVER_HACK_SCRIPT = "/hwgw/hack.js";
@@ -32,9 +29,6 @@ export const FILES_TO_COPY = [
   PREP_SERVER_WEAKEN_SCRIPT,
   PREP_SERVER_GROW_SCRIPT,
   PREP_SERVER_HACK_SCRIPT,
-  CHEESY_SERVER_WEAKEN_SCRIPT,
-  CHEESY_SERVER_GROW_SCRIPT,
-  CHEESY_SERVER_HACK_SCRIPT,
   HWGW_SERVER_HACK_SCRIPT,
   HWGW_SERVER_GROW_SCRIPT,
   HWGW_SERVER_WEAKEN_SCRIPT,

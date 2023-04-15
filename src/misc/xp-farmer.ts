@@ -27,7 +27,7 @@ export async function main(ns: NS) {
       XP_FARM_SCRIPT_NAME,
       farmer,
       Math.floor(MAX_RAM / WG_COST),
-      targets[i].name
+      targets[0].name
     );
     i++;
   }
