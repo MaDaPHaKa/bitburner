@@ -4,7 +4,7 @@ import {
   PREP_SERVER_HACK_SCRIPT,
   PREP_SERVER_WEAKEN_SCRIPT,
   SERVER_WEAKEN_V2_SCRIPT_NAME,
-  XP_FARMER_SERVER_NAME,
+  XP_FARMER_SERVER_PREFIX,
 } from "const/files";
 import * as calculators from "utils/calculation-utils";
 import { ServerInfo } from "utils/server-info";
@@ -27,7 +27,7 @@ export async function main(ns: NS) {
   if (debug) ns.tail();
   const servers: string[] = ns
     .getPurchasedServers()
-    .filter((el) => el != XP_FARMER_SERVER_NAME);
+    .filter((el) => el != XP_FARMER_SERVER_PREFIX);
   servers.unshift("home");
   const serverManager: ServerManager = new ServerManager(ns, servers);
   while (true) {

@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import {
   SERVER_WEAKEN_V2_SCRIPT_NAME,
-  XP_FARMER_SERVER_NAME,
+  XP_FARMER_SERVER_PREFIX,
 } from "const/files";
 import { ServerInfo } from "utils/server-info";
 import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
@@ -22,7 +22,7 @@ export async function main(ns: NS) {
   while (true) {
     const servers = ns
       .getPurchasedServers()
-      .filter((el) => el != "home" && el != XP_FARMER_SERVER_NAME);
+      .filter((el) => el != "home" && el != XP_FARMER_SERVER_PREFIX);
     let i = 0;
     for (let server of servers) {
       checkAndStartBeginnerSingoloTarget(ns, server, ordinati[i]);

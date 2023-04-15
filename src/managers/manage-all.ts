@@ -4,7 +4,7 @@ import {
   SERVER_HACK_SCRIPT_NAME,
   SERVER_WEAKEN_SCRIPT_NAME,
   SERVER_WEAKEN_V2_SCRIPT_NAME,
-  XP_FARMER_SERVER_NAME,
+  XP_FARMER_SERVER_PREFIX,
 } from "const/files";
 import { ServerInfo } from "utils/server-info";
 import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
@@ -35,7 +35,7 @@ export async function main(ns: NS) {
     //checkServer(ns, servers, 'srv-10');
     const servers = ns
       .getPurchasedServers()
-      .filter((el) => el != "home" && el != XP_FARMER_SERVER_NAME);
+      .filter((el) => el != "home" && el != XP_FARMER_SERVER_PREFIX);
     let i = 0;
     for (let server of servers) {
       checkServerSingoloTarget(ns, ordinati[i], server);

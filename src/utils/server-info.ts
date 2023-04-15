@@ -8,6 +8,7 @@ export class ServerInfo {
   hackTm = Infinity;
   hackValue = 0;
   hackChance = 0;
+  hackXp = 0;
   prepped = false;
   minHackLevel = 10000;
   currHackLevel = 0;
@@ -16,6 +17,7 @@ export class ServerInfo {
   cheesyScore = -1;
   cheesyScoreTest = -1;
   hgwgScore = -1;
+  farmScore = -1;
   constructor() {}
 
   calcolaScore() {
@@ -47,6 +49,10 @@ export class ServerInfo {
 
     if (this.hackChance > 0.8) {
       this.hgwgScore = this.cheesyScoreTest;
+    }
+
+    if (this.hackXp > 0) {
+      this.farmScore = this.hackXp / (this.weakenTm / 1000);
     }
   }
 }

@@ -1,66 +1,49 @@
-import { NS } from "@ns";
 export class HwgwBatch {
-  tempoHack: number;
-  tempoWeak: number;
-  tempoGrow: number;
   batchEndTime: number = -1;
-  batchRuns: HwgwBatchRun[] = [];
-
-  constructor(tempoHack: number, tempoWeak: number, tempoGrow: number) {
-    this.tempoGrow = tempoGrow;
-    this.tempoHack = tempoHack;
-    this.tempoWeak = tempoWeak;
-  }
-
-  calcolaRun(
-    iterazioni: number,
-    batchStartDelay: number = 200,
-    scritpDelay: number = 100
-  ) {
-    this.batchEndTime = 0;
-    this.batchRuns = [];
-    for (let i = 0; i < iterazioni; i++) {
-      this.batchRuns.push(
-        this.calcolaIterazione(batchStartDelay, scritpDelay, i)
-      );
-    }
-  }
-
-  calcolaIterazione(
-    batchStartDelay: number = 200,
-    scritpDelay: number = 100,
-    iteration: number = 0
-  ): HwgwBatchRun {
-    return new HwgwBatchRun(
-      this.tempoHack,
-      this.tempoWeak,
-      this.tempoGrow,
-      batchStartDelay,
-      scritpDelay,
-      iteration
-    );
-  }
-}
-
-export class HwgwBatchRun {
+  batchPort: number;
   sleepWeakHack: number;
   sleepHack: number;
   sleepGrow: number;
   sleepWeakGrow: number;
+  tempoBatch: number;
+  endTime: number = -1;
+  target: string;
+  running = false;
 
   constructor(
+    target: string,
+    batchPort: number,
     tempoHack: number,
     tempoWeak: number,
     tempoGrow: number,
-    batchStartDelay: number = 200,
-    scritpDelay: number = 100,
-    iteration: number = 0
+    batchStartDelay = 200,
+    scriptDelay = 100,
+    iteration = 0
   ) {
-    this.sleepWeakHack = (batchStartDelay + scritpDelay * 2) * iteration;
-    this.sleepHack = tempoWeak - tempoHack - scritpDelay + this.sleepWeakHack;
+    this.target = target;
+    this.batchPort = batchPort;
+    this.sleepWeakHack = Math.max(
+      0,
+      Math.floor((batchStartDelay + scriptDelay * 2) * iteration)
+    );
+    this.sleepHack = Math.max(
+      1,
+      Math.floor(tempoWeak - tempoHack - scriptDelay + this.sleepWeakHack)
+    );
     const endWeakHack = tempoWeak + this.sleepWeakHack;
-    this.sleepGrow = endWeakHack - tempoGrow + scritpDelay;
+    this.sleepGrow = Math.max(
+      1,
+      Math.floor(endWeakHack - tempoGrow + scriptDelay)
+    );
     const endGrow = this.sleepGrow + tempoGrow;
-    this.sleepWeakGrow = endGrow - tempoWeak + scritpDelay;
+    this.sleepWeakGrow = Math.max(
+      1,
+      Math.floor(endGrow - tempoWeak + scriptDelay)
+    );
+    this.tempoBatch = this.sleepWeakGrow + tempoWeak;
+  }
+
+  started() {
+    this.endTime = new Date().getTime() + this.tempoBatch;
   }
 }

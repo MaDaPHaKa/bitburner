@@ -79,6 +79,61 @@ export class ServerManager {
     }
   }
 
+  avviaHwgwScript(
+    scriptName: string,
+    threadNeeded: number,
+    ramPerThread: number,
+    debug = false,
+    ...args: (boolean | string | number)[]
+  ): void {
+    if (threadNeeded <= 0) {
+      if (debug) {
+        this.ns.print("script: ", scriptName);
+        if (args) this.ns.print("args: ", args);
+        this.ns.print("0 thread necessari");
+      }
+      return;
+    }
+    this.aggiornaUtilizzo();
+    const availableServers = this.servers.filter(
+      (el) => el.freeRam > 0 && el.freeRam > ramPerThread
+    );
+    if (debug) {
+      this.ns.print("server disponibili: ", availableServers.length);
+    }
+    for (let server of availableServers) {
+      const freeThreads = server.freeRam / ramPerThread;
+      if (debug) {
+        this.ns.print("script: ", scriptName);
+        this.ns.print("server: ", server.name);
+        this.ns.print("freeThreads: ", freeThreads);
+      }
+      let threadToLaunch = Math.floor(
+        freeThreads > threadNeeded ? threadNeeded : freeThreads
+      );
+      if (threadToLaunch > 0 && threadToLaunch < 1) threadToLaunch = 1;
+      if (threadToLaunch <= 0) break;
+      if (debug) {
+        this.ns.print("lancio script: ", scriptName);
+        this.ns.print("server: ", server.name);
+        this.ns.print("thread: ", threadToLaunch);
+        if (args) this.ns.print("args: ", args);
+      } else {
+        this.ns.exec(scriptName, server.name, threadToLaunch, ...args);
+      }
+      server.aggiornaServer();
+      threadNeeded -= threadToLaunch;
+      if (debug) {
+        this.ns.print("post lancio script: ", scriptName);
+        this.ns.print("thread rimanenti: ", threadNeeded);
+        this.ns.print("ram libera server: ", server.freeRam);
+      }
+      if (threadNeeded <= 0) {
+        break;
+      }
+    }
+  }
+
   aggiornaUtilizzo(clearTargets = false) {
     if (clearTargets) {
       this.hackTargets = [];

@@ -23,10 +23,10 @@ export const CHEESY_SERVER_GROW_SCRIPT = "/cheesy/grow.js";
 export const CHEESY_SERVER_HACK_SCRIPT = "/cheesy/hack.js";
 export const HWGW_SERVER_WEAKEN_SCRIPT = "/hwgw/weak.js";
 export const HWGW_SERVER_GROW_SCRIPT = "/hwgw/grow.js";
-export const HGWG_SERVER_HACK_SCRIPT = "/hwgw/hack.js";
+export const HWGW_SERVER_HACK_SCRIPT = "/hwgw/hack.js";
 
 // OTHER SCRIPTS
-export const HWGW_SCRIPT_NAME = "/hwgw/hwgw-prepper.js";
+export const HWGW_PREP_SCRIPT_NAME = "/hwgw/hwgw-prepper.js";
 
 export const FILES_TO_COPY = [
   PREP_SERVER_WEAKEN_SCRIPT,
@@ -35,7 +35,7 @@ export const FILES_TO_COPY = [
   CHEESY_SERVER_WEAKEN_SCRIPT,
   CHEESY_SERVER_GROW_SCRIPT,
   CHEESY_SERVER_HACK_SCRIPT,
-  HGWG_SERVER_HACK_SCRIPT,
+  HWGW_SERVER_HACK_SCRIPT,
   HWGW_SERVER_GROW_SCRIPT,
   HWGW_SERVER_WEAKEN_SCRIPT,
   BEGINNER_HACK_SCRIPT_NAME,
@@ -45,6 +45,8 @@ export const FILES_TO_COPY = [
 
 export const WG_COST = 1.75;
 export const H_COST = 1.7;
+export const HWGW_MONEY_PERCENTAGE = 0.8;
+
 // FILE CONSTANTS
 export const ALL_SERVERS_FILENAME = "/data/all_servers.txt";
 export const SERVERS_FILENAME = "/data/servers.txt";
@@ -52,8 +54,10 @@ export const SERVERS_DETAIL_FILENAME = "/data/servers_detail.txt";
 
 // SERVER CONSTANTS
 export const SERVER_NAME_PREFIX = "srv-";
-export const XP_FARMER_SERVER_NAME = "farmer-srv";
-export const SERVER_GB = 4096;
+export const XP_FARMER_SERVER_PREFIX = "farmer-srv-";
+export const SERVER_GB = 1048576;
 export const MAX_RAM = 1048576;
-export const SERVER_GB_WANTED = 4096;
-export const MAX_SERVER_NUM = 25;
+export const SERVER_GB_WANTED = 1048576;
+export const MAX_SERVER_NUM = 15;
+
+export const MAX_FARMER_SERVER_NUM = 10;

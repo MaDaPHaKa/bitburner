@@ -12,13 +12,26 @@ export class HwgOpsCalulator {
     this.hasFormulas = ns.fileExists("formulas.exe", "home");
   }
 
-  calcolaGrowThreads(cores: number = 1, debug = false) {
-    const threads = this.growtThreadsInternal(cores, debug);
+  calcolaGrowThreads(
+    startingMoney: number | undefined,
+    cores: number = 1,
+    debug = false
+  ) {
+    const threads = this.growtThreadsInternal(startingMoney, cores, debug);
     return Math.max(1, Math.ceil(threads));
   }
 
-  calcolaGrowTime(debug = false) {
-    return this.growtTimeInternal();
+  calcolaGrowTime(debug = false): number {
+    let time: number;
+    if (this.hasFormulas) {
+      time = this.ns.formulas.hacking.growTime(
+        this.targetServer,
+        this.ns.getPlayer()
+      );
+    } else {
+      time = this.ns.getGrowTime(this.target.name);
+    }
+    return Math.max(1, Math.ceil(time));
   }
 
   calcolaWeakThread(cores: number = 1) {
@@ -29,10 +42,19 @@ export class HwgOpsCalulator {
   }
 
   calcolaWeakTime() {
-    return this.weakTimeInternal();
+    let time: number;
+    if (this.hasFormulas) {
+      time = this.ns.formulas.hacking.weakenTime(
+        this.targetServer,
+        this.ns.getPlayer()
+      );
+    } else {
+      time = this.ns.getWeakenTime(this.target.name);
+    }
+    return Math.max(1, Math.ceil(time));
   }
 
-  calcolaHackThread() {
+  calcolaHackThread(percentage = 0.9) {
     const maxMoney = this.target.maxMoney;
     const moneyPerThread =
       (this.hasFormulas
@@ -41,7 +63,7 @@ export class HwgOpsCalulator {
             this.ns.getPlayer()
           )
         : this.ns.hackAnalyze(this.target.name)) * maxMoney;
-    const minWanted = maxMoney * 0.9;
+    const minWanted = maxMoney * percentage;
     const rate = (maxMoney - minWanted) / moneyPerThread;
     const threads = Math.max(1, Math.floor(rate));
     return threads;
@@ -59,14 +81,16 @@ export class HwgOpsCalulator {
   }
 
   calcolaHackTime() {
+    let time;
     if (this.hasFormulas) {
-      return this.ns.formulas.hacking.hackTime(
+      time = this.ns.formulas.hacking.hackTime(
         this.targetServer,
         this.ns.getPlayer()
       );
     } else {
-      return this.ns.getHackTime(this.target.name);
+      time = this.ns.getHackTime(this.target.name);
     }
+    return Math.max(1, Math.ceil(time));
   }
 
   calcolaHackChance() {
@@ -80,12 +104,28 @@ export class HwgOpsCalulator {
     }
   }
 
+  calcolaHackXp() {
+    if (this.hasFormulas) {
+      return this.ns.formulas.hacking.hackExp(
+        this.targetServer,
+        this.ns.getPlayer()
+      );
+    } else {
+      return -1;
+    }
+  }
+
   calcolaWeakThreadPerGrow(growThreads: number) {
     return Math.ceil((growThreads * 0.004) / 0.05);
   }
 
-  private growtThreadsInternal(cores: number = 1, debug = false): number {
+  private growtThreadsInternal(
+    startingMoney: number | undefined,
+    cores: number = 1,
+    debug = false
+  ): number {
     if (this.hasFormulas) {
+      if (startingMoney) this.targetServer.moneyAvailable = startingMoney;
       return this.ns.formulas.hacking.growThreads(
         this.targetServer,
         this.ns.getPlayer(),
@@ -96,28 +136,6 @@ export class HwgOpsCalulator {
       const currentMoney = this.ns.getServerMoneyAvailable(this.target.name);
       const rate = this.target.maxMoney / (currentMoney > 0 ? currentMoney : 1);
       return this.ns.growthAnalyze(this.target.name, rate, cores);
-    }
-  }
-
-  private growtTimeInternal(): number {
-    if (this.hasFormulas) {
-      return this.ns.formulas.hacking.growTime(
-        this.targetServer,
-        this.ns.getPlayer()
-      );
-    } else {
-      return this.ns.getGrowTime(this.target.name);
-    }
-  }
-
-  private weakTimeInternal(): number {
-    if (this.hasFormulas) {
-      return this.ns.formulas.hacking.weakenTime(
-        this.targetServer,
-        this.ns.getPlayer()
-      );
-    } else {
-      return this.ns.getWeakenTime(this.target.name);
     }
   }
 }

@@ -11,32 +11,33 @@ export async function main(ns: NS) {
     const servers = await handler.read();
     let serverInfo: ServerInfo[] = [];
     for (let target of servers) {
-      const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, target);
       const minSecurity = ns.getServerMinSecurityLevel(target);
       const maxMoney = ns.getServerMaxMoney(target);
       const serverMoney = ns.getServerMoneyAvailable(target);
       const serverSecurity = ns.getServerSecurityLevel(target);
       const growth = ns.getServerGrowth(target);
-      const growt = calc.calcolaGrowTime();
-      const weakent = calc.calcolaWeakTime();
-      const hackA = calc.calcolaHackPerc();
-      const hackChance = calc.calcolaHackChance();
-      const hackT = calc.calcolaHackTime();
       const hackReq = ns.getServerRequiredHackingLevel(target);
       const infoObj = new ServerInfo();
       infoObj.name = target;
       infoObj.minSecurity = minSecurity;
       infoObj.maxMoney = maxMoney;
       infoObj.growValue = growth;
+      infoObj.minHackLevel = hackReq;
+      infoObj.currHackLevel = ns.getHackingLevel();
+      const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, infoObj);
+      infoObj.hackXp = calc.calcolaHackXp();
+      const growt = calc.calcolaGrowTime();
+      const weakent = calc.calcolaWeakTime();
+      const hackA = calc.calcolaHackPerc();
+      const hackChance = calc.calcolaHackChance();
+      const hackT = calc.calcolaHackTime();
       infoObj.growTm = growt;
       infoObj.weakenTm = weakent;
       infoObj.hackChance = hackChance;
-      infoObj.prepped =
-        serverSecurity == minSecurity && serverMoney == maxMoney;
       infoObj.hackValue = hackA;
       infoObj.hackTm = hackT;
-      infoObj.minHackLevel = hackReq;
-      infoObj.currHackLevel = ns.getHackingLevel();
+      infoObj.prepped =
+        serverSecurity == minSecurity && serverMoney == maxMoney;
       infoObj.calcolaScore();
       serverInfo = [...serverInfo, infoObj];
     }
