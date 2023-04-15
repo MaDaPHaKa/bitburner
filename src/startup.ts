@@ -1,8 +1,9 @@
 import { NS } from "@ns";
+import { GET_INFO_NAME, MANAGE_ALL_NAME, SCAN_SCRIPT_NAME } from "const/files";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  ns.exec("/scan-and-nuke/scan-and-update-file.js", "home", 1);
-  ns.exec("/scan-and-nuke/get-stats.js", "home", 1);
-  ns.spawn("/managers/manage-all.js", 1);
+  ns.exec(SCAN_SCRIPT_NAME, "home", 1);
+  ns.exec(GET_INFO_NAME, "home", 1);
+  ns.spawn(MANAGE_ALL_NAME, 1);
 }

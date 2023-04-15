@@ -42,6 +42,6 @@ export async function main(ns: NS) {
     }
     handler = new FileHandler(ns, SERVERS_DETAIL_FILENAME);
     await handler.write(serverInfo, "w");
-    await ns.sleep(500);
+    await ns.sleep(1000);
   }
 }
