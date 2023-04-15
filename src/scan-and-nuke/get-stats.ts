@@ -1,6 +1,7 @@
 import { NS } from "@ns";
 import { SERVERS_DETAIL_FILENAME, SERVERS_FILENAME } from "const/files";
 import { FileHandler } from "files/filehandler";
+import { HwgOpsCalulator } from "utils/hwg-ops-calulator";
 import { ServerInfo } from "utils/server-info";
 
 /** @param {NS} ns */
@@ -10,16 +11,17 @@ export async function main(ns: NS) {
     const servers = await handler.read();
     let serverInfo: ServerInfo[] = [];
     for (let target of servers) {
+      const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, target);
       const minSecurity = ns.getServerMinSecurityLevel(target);
       const maxMoney = ns.getServerMaxMoney(target);
       const serverMoney = ns.getServerMoneyAvailable(target);
       const serverSecurity = ns.getServerSecurityLevel(target);
       const growth = ns.getServerGrowth(target);
-      const growt = ns.getGrowTime(target);
-      const weakent = ns.getWeakenTime(target);
-      const hackA = ns.hackAnalyze(target);
-      const hackChance = ns.hackAnalyzeChance(target);
-      const hackT = ns.getHackTime(target);
+      const growt = calc.calcolaGrowTime();
+      const weakent = calc.calcolaWeakTime();
+      const hackA = calc.calcolaHackPerc();
+      const hackChance = calc.calcolaHackChance();
+      const hackT = calc.calcolaHackTime();
       const hackReq = ns.getServerRequiredHackingLevel(target);
       const infoObj = new ServerInfo();
       infoObj.name = target;

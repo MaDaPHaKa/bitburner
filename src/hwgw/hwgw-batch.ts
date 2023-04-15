@@ -1,10 +1,10 @@
 import { NS } from "@ns";
-export class HgwgBatch {
+export class HwgwBatch {
   tempoHack: number;
   tempoWeak: number;
   tempoGrow: number;
   batchEndTime: number = -1;
-  batchRuns: HgwgBatchRun[] = [];
+  batchRuns: HwgwBatchRun[] = [];
 
   constructor(tempoHack: number, tempoWeak: number, tempoGrow: number) {
     this.tempoGrow = tempoGrow;
@@ -30,8 +30,8 @@ export class HgwgBatch {
     batchStartDelay: number = 200,
     scritpDelay: number = 100,
     iteration: number = 0
-  ): HgwgBatchRun {
-    return new HgwgBatchRun(
+  ): HwgwBatchRun {
+    return new HwgwBatchRun(
       this.tempoHack,
       this.tempoWeak,
       this.tempoGrow,
@@ -42,7 +42,7 @@ export class HgwgBatch {
   }
 }
 
-export class HgwgBatchRun {
+export class HwgwBatchRun {
   sleepWeakHack: number;
   sleepHack: number;
   sleepGrow: number;

@@ -1,16 +1,14 @@
-import { NS, Server } from "@ns";
+import { NS } from "@ns";
 import {
   PREP_SERVER_GROW_SCRIPT,
   PREP_SERVER_HACK_SCRIPT,
   PREP_SERVER_WEAKEN_SCRIPT,
-  SERVERS_DETAIL_FILENAME,
-  SERVERS_FILENAME,
-  SERVER_WEAKEN_V2_SCRIPT_NAME,
+  SERVER_WEAKEN_V2_SCRIPT_NAME
 } from "const/files";
-import { FileHandler } from "files/filehandler";
 import * as calculators from "utils/calculation-utils";
 import { ServerInfo } from "utils/server-info";
 import { ServerManager } from "utils/server-manager";
+import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -30,15 +28,9 @@ export async function main(ns: NS) {
   servers.unshift("home");
   const serverManager: ServerManager = new ServerManager(ns, servers);
   while (true) {
-    const allTargets: string[] = await new FileHandler(
-      ns,
-      SERVERS_FILENAME
-    ).read();
+    const allTargets: string[] = await loadTargetNames(ns);
     const targetInfo: ServerInfo[] = (
-      (await new FileHandler(
-        ns,
-        SERVERS_DETAIL_FILENAME
-      ).read()) as ServerInfo[]
+      (await loadTargetInfo(ns)) as ServerInfo[]
     ).filter((el) => el.cheesyScoreTest > 0);
     const toPrep = targetInfo
       .filter((el) => !el.prepped)

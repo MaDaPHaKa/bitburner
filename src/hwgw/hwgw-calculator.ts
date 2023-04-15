@@ -8,6 +8,5 @@ export class HgwgTargetManager {
   constructor(ns: NS, target: ServerInfo) {
     this.target = target;
     this.ns = ns;
-    
   }
 }

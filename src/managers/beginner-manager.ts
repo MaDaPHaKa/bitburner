@@ -1,22 +1,14 @@
 import { NS } from "@ns";
-import {
-  SERVERS_DETAIL_FILENAME,
-  SERVERS_FILENAME,
-  SERVER_WEAKEN_V2_SCRIPT_NAME,
-} from "const/files";
-import { FileHandler } from "files/filehandler";
+import { SERVER_WEAKEN_V2_SCRIPT_NAME } from "const/files";
 import { ServerInfo } from "utils/server-info";
+import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog("ALL");
   //const servers = ns.args;
-  const handler = new FileHandler(ns, SERVERS_FILENAME);
-  const targets = await handler.read();
-  const targetInfo: ServerInfo[] = await new FileHandler(
-    ns,
-    SERVERS_DETAIL_FILENAME
-  ).read();
+  const targets: string[] = await loadTargetNames(ns);
+  const targetInfo: ServerInfo[] = (await loadTargetInfo(ns)) as ServerInfo[];
   // const ordinati = targetInfo
   //   .filter((el) => el.cheesyScoreTest > 0)
   //   .sort(function (a, b) {

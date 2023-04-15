@@ -1,12 +1,13 @@
 import { NS } from "@ns";
 import {
-    CHEESY_SERVER_GROW_SCRIPT,
-    CHEESY_SERVER_HACK_SCRIPT,
-    CHEESY_SERVER_WEAKEN_SCRIPT,
-    SERVERS_DETAIL_FILENAME
+  CHEESY_SERVER_GROW_SCRIPT,
+  CHEESY_SERVER_HACK_SCRIPT,
+  CHEESY_SERVER_WEAKEN_SCRIPT,
+  SERVERS_DETAIL_FILENAME,
 } from "/const/files";
 import { FileHandler } from "/files/filehandler";
 import { ServerInfo } from "/utils/server-info";
+import { loadTargetInfo } from "/utils/target-loader";
 
 /** @param {NS} ns **/
 export async function main(ns: NS) {
@@ -38,17 +39,15 @@ export async function main(ns: NS) {
   let randomArgument = 1;
 
   while (true) {
-    const targetInfo: ServerInfo[] = (
-      (await new FileHandler(
-        ns,
-        SERVERS_DETAIL_FILENAME
-      ).read()) as ServerInfo[]
-    ).sort(function (a, b) {
+    const targetInfo: ServerInfo[] = (await loadTargetInfo(ns)).sort(function (
+      a,
+      b
+    ) {
       return b.cheesyScoreTest - a.cheesyScoreTest;
     });
     // read (new) targets - if you do not use fileHandlers like i do, just throw in an array of targets or a function or anything really.
     // If desperate or no clue, use the commented lines instead and change target to your highest/best target you currently have
-    const TARGETS = targetInfo.slice(0,6).map((el) => el.name);
+    const TARGETS = targetInfo.slice(0, 6).map((el) => el.name);
     //const TARGETS = ["n00dles","foodnstuff","sigma-cosmetics","joesguns","hong-fang-tea","harakiri-sushi","iron-gym","darkweb","home","zer0","CSEC","nectar-net","max-hardware","neo-net","silver-helix","phantasy","omega-net","computek","netlink","johnson-ortho","the-hub","crush-fitness","avmnite-02h","catalyst","I.I.I.I","summit-uni","syscore","rothman-uni","zb-institute","lexo-corp","rho-construction","millenium-fitness","alpha-ent","aevum-police","aerocorp","snap-fitness","galactic-cyber","global-pharm","omnia","deltaone","unitalife","solaris","defcomm","icarus","univ-energy","zeus-med","taiyang-digital","zb-def","infocomm","nova-med","titan-labs","applied-energetics","microdyne","run4theh111z","stormtech","helios","vitalife","fulcrumtech","4sigma","kuai-gong",".","omnitek","b-and-a","powerhouse-fitness","nwo","clarkinc","blade","ecorp","megacorp","fulcrumassets","The-Cave"];
 
     // The best server we know for our current state. Or just a random one you can tackle.
