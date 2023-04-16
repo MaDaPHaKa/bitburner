@@ -1,18 +1,20 @@
+import { HWGW_PORT_1, HWGW_PORT_2, HWGW_PORT_3, HWGW_PORT_4 } from 'const/files';
+
 export class HwgwBatch {
-  batchEndTime: number = -1;
   batchPort: number;
   sleepWeakHack: number;
   sleepHack: number;
   sleepGrow: number;
   sleepWeakGrow: number;
-  tempoBatch: number;
-  endTime: number = -1;
-  target: string;
+  hackThreads: number = 0;
+  hackWeakThreads: number = 0;
+  growThreads: number = 0;
+  growWeakThreads: number = 0;
   running = false;
 
   constructor(
     target: string,
-    batchPort: number,
+    portSeed: number,
     tempoHack: number,
     tempoWeak: number,
     tempoGrow: number,
@@ -20,30 +22,15 @@ export class HwgwBatch {
     scriptDelay = 100,
     iteration = 0
   ) {
-    this.target = target;
-    this.batchPort = batchPort;
-    this.sleepWeakHack = Math.max(
-      0,
-      Math.floor((batchStartDelay + scriptDelay * 2) * iteration)
-    );
-    this.sleepHack = Math.max(
-      1,
-      Math.floor(tempoWeak - tempoHack - scriptDelay + this.sleepWeakHack)
-    );
+    if (portSeed % 4 == 0) this.batchPort = HWGW_PORT_4;
+    if (portSeed % 3 == 0) this.batchPort = HWGW_PORT_3;
+    if (portSeed % 2 == 0) this.batchPort = HWGW_PORT_2;
+    else this.batchPort = HWGW_PORT_1;
+    this.sleepWeakHack = Math.max(0, Math.floor((batchStartDelay + scriptDelay * 2) * iteration));
+    this.sleepHack = Math.max(1, Math.floor(tempoWeak - tempoHack - scriptDelay + this.sleepWeakHack));
     const endWeakHack = tempoWeak + this.sleepWeakHack;
-    this.sleepGrow = Math.max(
-      1,
-      Math.floor(endWeakHack - tempoGrow + scriptDelay)
-    );
+    this.sleepGrow = Math.max(1, Math.floor(endWeakHack - tempoGrow + scriptDelay));
     const endGrow = this.sleepGrow + tempoGrow;
-    this.sleepWeakGrow = Math.max(
-      1,
-      Math.floor(endGrow - tempoWeak + scriptDelay)
-    );
-    this.tempoBatch = this.sleepWeakGrow + tempoWeak;
-  }
-
-  started() {
-    this.endTime = new Date().getTime() + this.tempoBatch;
+    this.sleepWeakGrow = Math.max(1, Math.floor(endGrow - tempoWeak + scriptDelay));
   }
 }

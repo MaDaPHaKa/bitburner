@@ -1,8 +1,9 @@
-import { NS } from "@ns";
-import { SERVERS_DETAIL_FILENAME, SERVERS_FILENAME } from "const/files";
-import { FileHandler } from "files/filehandler";
-import { HwgOpsCalulator } from "utils/hwg-ops-calulator";
-import { ServerInfo } from "utils/server-info";
+import { NS } from '@ns';
+import { SERVERS_DETAIL_FILENAME, SERVERS_FILENAME } from 'const/files';
+import { FileHandler } from 'files/filehandler';
+import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
+import { ServerInfo } from 'utils/server-info';
+import { HwgwServerInfo } from '/utils/hwgw-server-info';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -15,16 +16,15 @@ export async function main(ns: NS) {
       const maxMoney = ns.getServerMaxMoney(target);
       const serverMoney = ns.getServerMoneyAvailable(target);
       const serverSecurity = ns.getServerSecurityLevel(target);
-      const growth = ns.getServerGrowth(target);
       const hackReq = ns.getServerRequiredHackingLevel(target);
       const infoObj = new ServerInfo();
       infoObj.name = target;
       infoObj.minSecurity = minSecurity;
       infoObj.maxMoney = maxMoney;
-      infoObj.growValue = growth;
       infoObj.minHackLevel = hackReq;
       infoObj.currHackLevel = ns.getHackingLevel();
-      const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, infoObj);
+      const tempInfo: HwgwServerInfo = new HwgwServerInfo(ns, infoObj);
+      const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, tempInfo);
       infoObj.hackXp = calc.calcolaHackXp();
       const growt = calc.calcolaGrowTime();
       const weakent = calc.calcolaWeakTime();
@@ -36,13 +36,12 @@ export async function main(ns: NS) {
       infoObj.hackChance = hackChance;
       infoObj.hackValue = hackA;
       infoObj.hackTm = hackT;
-      infoObj.prepped =
-        serverSecurity == minSecurity && serverMoney == maxMoney;
+      infoObj.prepped = serverSecurity == minSecurity && serverMoney == maxMoney;
       infoObj.calcolaScore();
       serverInfo = [...serverInfo, infoObj];
     }
     handler = new FileHandler(ns, SERVERS_DETAIL_FILENAME);
-    await handler.write(serverInfo, "w");
+    await handler.write(serverInfo, 'w');
     await ns.sleep(1000);
   }
 }

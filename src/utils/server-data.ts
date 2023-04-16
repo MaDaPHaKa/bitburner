@@ -1,4 +1,5 @@
-import { NS } from "@ns";
+import { NS } from '@ns';
+import { HOME_FREE_RAM_TO_KEEP } from 'const/files';
 
 export class ServerData {
   ns: NS;
@@ -18,8 +19,7 @@ export class ServerData {
   }
 
   aggiornaServer() {
-    if (this.name == "home")
-      this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name) - 20;
+    if (this.name == 'home') this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name) - HOME_FREE_RAM_TO_KEEP;
     else this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name);
   }
 }

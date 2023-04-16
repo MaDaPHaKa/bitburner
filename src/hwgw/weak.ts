@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS } from '@ns';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -8,5 +8,5 @@ export async function main(ns: NS) {
   if (sleep) await ns.sleep(sleep);
   //and then grow!
   await ns.weaken(ns.args[0] as string);
-  if (writePort) ns.tryWritePort(writePort, 1);
+  if (writePort) ns.tryWritePort(writePort, ns.args[0] as string);
 }

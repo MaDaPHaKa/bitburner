@@ -1,58 +1,54 @@
-import { NS } from "@ns";
+import { NS } from '@ns';
 import {
   PREP_SERVER_GROW_SCRIPT,
   PREP_SERVER_HACK_SCRIPT,
   PREP_SERVER_WEAKEN_SCRIPT,
   SERVER_WEAKEN_V2_SCRIPT_NAME,
   XP_FARMER_SERVER_PREFIX,
-} from "const/files";
-import * as calculators from "utils/calculation-utils";
-import { ServerInfo } from "utils/server-info";
-import { ServerManager } from "utils/server-manager";
-import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
+} from 'const/files';
+import * as calculators from 'utils/calculation-utils';
+import { ServerInfo } from 'utils/server-info';
+import { ServerManager } from 'utils/server-manager';
+import { loadTargetInfo, loadTargetNames } from 'utils/target-loader';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   const debug = ns.args[0] ? true : false;
   //ns.disableLog("ALL");
-  ns.disableLog("sleep");
-  ns.disableLog("getServerMaxRam");
-  ns.disableLog("getServerUsedRam");
-  ns.disableLog("getServerSecurityLevel");
-  ns.disableLog("getServerMinSecurityLevel");
-  ns.disableLog("getServerMaxMoney");
-  ns.disableLog("getServerMoneyAvailable");
-  ns.disableLog("getHackingLevel");
-  ns.disableLog("exec");
+  ns.disableLog('sleep');
+  ns.disableLog('getServerMaxRam');
+  ns.disableLog('getServerUsedRam');
+  ns.disableLog('getServerSecurityLevel');
+  ns.disableLog('getServerMinSecurityLevel');
+  ns.disableLog('getServerMaxMoney');
+  ns.disableLog('getServerMoneyAvailable');
+  ns.disableLog('getHackingLevel');
+  ns.disableLog('exec');
   if (debug) ns.tail();
-  const servers: string[] = ns
-    .getPurchasedServers()
-    .filter((el) => el != XP_FARMER_SERVER_PREFIX);
-  servers.unshift("home");
+  const servers: string[] = ns.getPurchasedServers().filter((el) => el != XP_FARMER_SERVER_PREFIX);
+  servers.unshift('home');
   const serverManager: ServerManager = new ServerManager(ns, servers);
   while (true) {
     const allTargets: string[] = await loadTargetNames(ns);
     // if not debug mode start "weakmyself" process on each target
     if (!debug) checkAutoWeak(ns, allTargets);
 
-    const targetInfo: ServerInfo[] = (
-      (await loadTargetInfo(ns)) as ServerInfo[]
-    ).filter((el) => el.cheesyScoreTest > 0);
+    const targetInfo: ServerInfo[] = ((await loadTargetInfo(ns)) as ServerInfo[]).filter((el) => el.score > 0);
     const toPrep = targetInfo
       .filter((el) => !el.prepped)
       .sort(function (a, b) {
-        return b.cheesyScoreTest - a.cheesyScoreTest;
+        return b.score - a.score;
       });
     let prepped: ServerInfo[] = targetInfo.filter((el) => el.prepped);
     serverManager.aggiornaUtilizzo(true);
     if (debug) {
-      ns.print("servers: ", servers);
-      ns.print("server manager: ", serverManager);
+      ns.print('servers: ', servers);
+      ns.print('server manager: ', serverManager);
     }
     if (prepped.length > 0) {
       prepped = prepped
         .sort(function (a, b) {
-          return b.cheesyScoreTest - a.cheesyScoreTest;
+          return b.score - a.score;
         })
         .filter((el) => serverManager.hackTargets.indexOf(el.name) < 0);
       for (let prep of prepped) {
@@ -79,21 +75,10 @@ export async function main(ns: NS) {
  * @param target
  * @returns true if server list is still usable, false otherwise
  */
-function launchHack(
-  ns: NS,
-  serverManager: ServerManager,
-  target: ServerInfo,
-  debug = false
-): ServerManager {
+function launchHack(ns: NS, serverManager: ServerManager, target: ServerInfo, debug = false): ServerManager {
   const scriptRam = ns.getScriptRam(PREP_SERVER_HACK_SCRIPT);
   const hackThreadNeeded = calculators.calcolaThreadHack(ns, target, debug);
-  serverManager.avviaScript(
-    PREP_SERVER_HACK_SCRIPT,
-    hackThreadNeeded,
-    scriptRam,
-    target.name,
-    debug
-  );
+  serverManager.avviaScript(PREP_SERVER_HACK_SCRIPT, hackThreadNeeded, scriptRam, target.name, debug);
   return serverManager;
 }
 
@@ -108,33 +93,14 @@ function prepTarget(
 ) {
   if (serverManager.weakTargets.indexOf(target.name) < 0) {
     const weakThreadNeeded = calculators.calcolaThreadWeak(ns, target, debug);
-    serverManager.avviaScript(
-      PREP_SERVER_WEAKEN_SCRIPT,
-      weakThreadNeeded,
-      weakCost,
-      target.name,
-      debug
-    );
+    serverManager.avviaScript(PREP_SERVER_WEAKEN_SCRIPT, weakThreadNeeded, weakCost, target.name, debug);
   }
 
   if (serverManager.growTargets.indexOf(target.name) < 0) {
     const growThreadNeeded = calculators.calcolaThreadGrow(ns, target, debug);
-    const weakThreadCompensationNeeded =
-      calculators.calcolaWeakThreadPerGrow(growThreadNeeded);
-    serverManager.avviaScript(
-      PREP_SERVER_GROW_SCRIPT,
-      growThreadNeeded,
-      growCost,
-      target.name,
-      debug
-    );
-    serverManager.avviaScript(
-      PREP_SERVER_WEAKEN_SCRIPT,
-      weakThreadCompensationNeeded,
-      weakCost,
-      target.name,
-      debug
-    );
+    const weakThreadCompensationNeeded = calculators.calcolaWeakThreadPerGrow(growThreadNeeded);
+    serverManager.avviaScript(PREP_SERVER_GROW_SCRIPT, growThreadNeeded, growCost, target.name, debug);
+    serverManager.avviaScript(PREP_SERVER_WEAKEN_SCRIPT, weakThreadCompensationNeeded, weakCost, target.name, debug);
   }
   return serverManager;
 }

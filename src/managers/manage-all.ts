@@ -1,23 +1,23 @@
-import { NS } from "@ns";
+import { NS } from '@ns';
 import {
   SERVER_GROW_SCRIPT_NAME,
   SERVER_HACK_SCRIPT_NAME,
   SERVER_WEAKEN_SCRIPT_NAME,
   SERVER_WEAKEN_V2_SCRIPT_NAME,
   XP_FARMER_SERVER_PREFIX,
-} from "const/files";
-import { ServerInfo } from "utils/server-info";
-import { loadTargetInfo, loadTargetNames } from "utils/target-loader";
+} from 'const/files';
+import { ServerInfo } from 'utils/server-info';
+import { loadTargetInfo, loadTargetNames } from 'utils/target-loader';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  ns.disableLog("ALL");
+  ns.disableLog('ALL');
   //const servers = ns.args;
   const servers: string[] = await loadTargetNames(ns);
   const targetInfo: ServerInfo[] = (await loadTargetInfo(ns)) as ServerInfo[];
   const ordinati = targetInfo
     .sort(function (a, b) {
-      return b.cheesyScoreTest - a.cheesyScoreTest;
+      return b.score - a.score;
     })
     .map((el) => el.name);
   while (true) {
@@ -33,9 +33,7 @@ export async function main(ns: NS) {
     //checkServer(ns, servers, 'srv-8');
     //checkServer(ns, servers, 'srv-9');
     //checkServer(ns, servers, 'srv-10');
-    const servers = ns
-      .getPurchasedServers()
-      .filter((el) => el != "home" && el != XP_FARMER_SERVER_PREFIX);
+    const servers = ns.getPurchasedServers().filter((el) => el != 'home' && el != XP_FARMER_SERVER_PREFIX);
     let i = 0;
     for (let server of servers) {
       checkServerSingoloTarget(ns, ordinati[i], server);
@@ -49,13 +47,7 @@ export async function main(ns: NS) {
   }
 }
 
-function startScriptHost(
-  ns: NS,
-  host: string,
-  target: string,
-  script: string,
-  otherArgs: any[]
-) {
+function startScriptHost(ns: NS, host: string, target: string, script: string, otherArgs: any[]) {
   if (!host || !target) return;
   const scriptRam = ns.getScriptRam(script);
   const serverRam = ns.getServerMaxRam(host);
@@ -81,24 +73,17 @@ function checkServer(ns: NS, servers: string[], host: string) {
     const moneyThresh = ns.getServerMaxMoney(server);
     if (ns.getServerUsedRam(host) > 0) {
       if (!secOk) {
-        checkAndKillScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [
-          moneyThresh,
-        ]);
+        checkAndKillScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [moneyThresh]);
       } else continue;
     }
     const serverMoney = ns.getServerMoneyAvailable(server);
 
     if (!secOk) {
-      startScriptHost(ns, host, server, SERVER_WEAKEN_SCRIPT_NAME, [
-        securityThresh,
-      ]);
+      startScriptHost(ns, host, server, SERVER_WEAKEN_SCRIPT_NAME, [securityThresh]);
     } else if (serverMoney < moneyThresh) {
       startScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [moneyThresh]);
     } else {
-      startScriptHost(ns, host, server, SERVER_HACK_SCRIPT_NAME, [
-        securityThresh,
-        moneyThresh,
-      ]);
+      startScriptHost(ns, host, server, SERVER_HACK_SCRIPT_NAME, [securityThresh, moneyThresh]);
     }
   }
 }
@@ -118,29 +103,15 @@ function checkServerSingoloTarget(ns: NS, target: string, server: string) {
   //	}
   const serverMoney = ns.getServerMoneyAvailable(target);
   if (!secOk) {
-    startScriptHost(ns, server, target, SERVER_WEAKEN_SCRIPT_NAME, [
-      securityThresh,
-    ]);
+    startScriptHost(ns, server, target, SERVER_WEAKEN_SCRIPT_NAME, [securityThresh]);
   } else if (serverMoney < moneyThresh) {
-    startScriptHost(ns, server, target, SERVER_GROW_SCRIPT_NAME, [
-      moneyThresh,
-      securityThreshScript,
-    ]);
+    startScriptHost(ns, server, target, SERVER_GROW_SCRIPT_NAME, [moneyThresh, securityThreshScript]);
   } else {
-    startScriptHost(ns, server, target, SERVER_HACK_SCRIPT_NAME, [
-      securityThreshScript,
-      moneyThresh,
-    ]);
+    startScriptHost(ns, server, target, SERVER_HACK_SCRIPT_NAME, [securityThreshScript, moneyThresh]);
   }
 }
 
-function checkAndKillScriptHost(
-  ns: NS,
-  host: string,
-  server: string,
-  script: string,
-  otherArgs: any[]
-) {
+function checkAndKillScriptHost(ns: NS, host: string, server: string, script: string, otherArgs: any[]) {
   const scriptRam = ns.getScriptRam(script);
   const serverRam = ns.getServerMaxRam(host);
   const threads = Math.floor(serverRam / scriptRam);
@@ -169,11 +140,11 @@ function checkAndStartAutoWeak(ns: NS, server: string) {
 
 /** @param {NS} ns */
 function checkAndStartBeginnerHackHome(ns: NS, target: string) {
-  const scriptRam = ns.getScriptRam("beginner-hack.js");
-  const serverUsedRam = ns.getServerUsedRam("home");
-  const serverRam = ns.getServerMaxRam("home") - 20;
+  const scriptRam = ns.getScriptRam('beginner-hack.js');
+  const serverUsedRam = ns.getServerUsedRam('home');
+  const serverRam = ns.getServerMaxRam('home') - 20;
   const threads = Math.floor((serverRam - serverUsedRam) / scriptRam);
   if (!isNaN(threads) && threads > 0) {
-    ns.exec("beginner-hack.js", "home", threads, target);
+    ns.exec('beginner-hack.js', 'home', threads, target);
   }
 }
