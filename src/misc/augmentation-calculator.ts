@@ -1,23 +1,19 @@
-import { NS } from "@ns";
+import { NS } from '@ns';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   const augmentations: Augmentation[] = [
-    new Augmentation("DataJack", 450000000, "tokyo/nitesec"),
-    new Augmentation("Neuregen Gene Modification", 375000000, "chancho"),
-    new Augmentation(
-      "Cranial Signal Processors - Gen III",
-      550000000,
-      "nitesec"
-    ),
-    new Augmentation("CRTX42-AA Gene Modification", 225000000, "nitesec"),
-    new Augmentation("Neural-Retention Enhancement", 250000000, "nitesec"),
-    new Augmentation("Embedded Netburner Module", 250000000, "nitesec"),
-    new Augmentation("Neurotrainer II", 45000000, "nitesec"),
-    new Augmentation("Artificial Synaptic Potentiation", 80000000, "nitesec"),
-    new Augmentation("INFRARET Enhancement", 30000000, "ishima"),
-    new Augmentation("Combat Rib I", 23000000, "nitesec"),
-    new Augmentation("NutriGen Implant", 2500000, "tokio"),
+    new Augmentation('DataJack', 450000000, 'tokyo/nitesec'),
+    new Augmentation('Neuregen Gene Modification', 375000000, 'chancho'),
+    new Augmentation('Cranial Signal Processors - Gen III', 550000000, 'nitesec'),
+    new Augmentation('CRTX42-AA Gene Modification', 225000000, 'nitesec'),
+    new Augmentation('Neural-Retention Enhancement', 250000000, 'nitesec'),
+    new Augmentation('Embedded Netburner Module', 250000000, 'nitesec'),
+    new Augmentation('Neurotrainer II', 45000000, 'nitesec'),
+    new Augmentation('Artificial Synaptic Potentiation', 80000000, 'nitesec'),
+    new Augmentation('INFRARET Enhancement', 30000000, 'ishima'),
+    new Augmentation('Combat Rib I', 23000000, 'nitesec'),
+    new Augmentation('NutriGen Implant', 2500000, 'tokio'),
     // new Augmentation("Artificial Synaptic Potentiation", 80000, "black hand"),
     // new Augmentation("Embedded Netburner Module", 250000000, "black hand"),
     // new Augmentation("Enhanced Myelin Sheathing", 1375000000, "black hand"),
@@ -45,9 +41,9 @@ export async function main(ns: NS) {
       return a.cost - b.cost;
     })
     .reverse();
-  ns.tprint("ordine acquisto: ", augmentations);
+  ns.tprint('ordine acquisto: ', augmentations);
   const costoTotale = calcolaSpesa(augmentations);
-  ns.tprint("costo totale: ", ns.formatNumber(costoTotale, 3));
+  ns.tprint('costo totale: ', ns.formatNumber(costoTotale, 3));
 }
 
 function calcolaSpesa(augmentations: Augmentation[] = []) {

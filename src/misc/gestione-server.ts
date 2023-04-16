@@ -1,9 +1,9 @@
 import { NS } from '@ns';
 import {
-  SERVER_GB_WANTED,
-  MAX_SERVER_NUM,
-  MAX_RAM,
   MAX_FARMER_SERVER_NUM,
+  MAX_RAM,
+  MAX_SERVER_NUM,
+  SERVER_GB_WANTED,
   SERVER_NAME_PREFIX,
   XP_FARMER_SERVER_PREFIX,
 } from 'const/files';

@@ -1,10 +1,10 @@
 import { NS } from '@ns';
 import { HWGW_PREP_PORT, HWGW_SERVER_GROW_SCRIPT, HWGW_SERVER_WEAKEN_SCRIPT, WG_COST } from 'const/files';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
+import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerInfo } from 'utils/server-info';
 import { ServerManager } from 'utils/server-manager';
 import { loadTargetInfo } from 'utils/target-loader';
-import { HwgwServerInfo } from 'utils/hwgw-server-info';
 
 export async function main(ns: NS) {
   ns.disableLog('ALL');

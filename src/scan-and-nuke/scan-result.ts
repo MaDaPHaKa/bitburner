@@ -1,5 +1,5 @@
-import { NS } from "@ns";
-import { SERVER_NAME_PREFIX } from "const/files";
+import { NS } from '@ns';
+import { SERVER_NAME_PREFIX } from 'const/files';
 
 export class ScanResult {
   ns: NS;
@@ -12,7 +12,7 @@ export class ScanResult {
   }
 
   scanAndCheckNetwork(): void {
-    let device = "home";
+    let device = 'home';
     this.scan(device);
   }
 
@@ -22,13 +22,8 @@ export class ScanResult {
     const localTargets: string[] = [];
     scanTargets.forEach((newDevice) => {
       const alreadyThere = this.allServers.includes(newDevice);
-      const canHack = this.nukeServer(
-        this.ns,
-        newDevice,
-        this.ns.getHostname()
-      );
-      const isMine =
-        newDevice === "home" || newDevice.startsWith(SERVER_NAME_PREFIX);
+      const canHack = this.nukeServer(this.ns, newDevice, this.ns.getHostname());
+      const isMine = newDevice === 'home' || newDevice.startsWith(SERVER_NAME_PREFIX);
       const profitable = this.ns.getServerMaxMoney(newDevice) > 0;
       if (!alreadyThere && !isMine) {
         localTargets.push(newDevice);
@@ -49,28 +44,28 @@ export class ScanResult {
     if (reqHackLevel > myHackLevel) return false;
     const portRequired = ns.getServerNumPortsRequired(target);
     const cracks = [];
-    if (ns.fileExists("brutessh.exe", runningHost)) {
+    if (ns.fileExists('brutessh.exe', runningHost)) {
       cracks.push(ns.brutessh);
     }
-    if (ns.fileExists("ftpcrack.exe", runningHost)) {
+    if (ns.fileExists('ftpcrack.exe', runningHost)) {
       cracks.push(ns.ftpcrack);
     }
-    if (ns.fileExists("httpworm.exe", runningHost)) {
+    if (ns.fileExists('httpworm.exe', runningHost)) {
       cracks.push(ns.httpworm);
     }
-    if (ns.fileExists("relaysmtp.exe", runningHost)) {
+    if (ns.fileExists('relaysmtp.exe', runningHost)) {
       cracks.push(ns.relaysmtp);
     }
-    if (ns.fileExists("sqlinject.exe", runningHost)) {
+    if (ns.fileExists('sqlinject.exe', runningHost)) {
       cracks.push(ns.sqlinject);
     }
     if (portRequired > cracks.length) {
-      ns.print("cannot crack ", target);
+      ns.print('cannot crack ', target);
       return false;
     }
     for (let crack of cracks) crack(target);
     // Get root access to target server
-    ns.print("cracked ", target);
+    ns.print('cracked ', target);
     ns.nuke(target);
     return true;
   }

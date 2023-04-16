@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS } from '@ns';
 
 export class FileHandler {
   #file: any;
@@ -10,10 +10,10 @@ export class FileHandler {
   }
 
   async newFile() {
-    await this.#ns.write(this.#file, "", "w");
+    await this.#ns.write(this.#file, '', 'w');
   }
 
-  async write(data: any, mode: "w" | "a" | undefined = "a") {
+  async write(data: any, mode: 'w' | 'a' | undefined = 'a') {
     await this.#ns.write(this.#file, JSON.stringify(data), mode);
   }
 

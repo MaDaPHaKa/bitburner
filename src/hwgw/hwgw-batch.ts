@@ -13,7 +13,6 @@ export class HwgwBatch {
   running = false;
 
   constructor(
-    target: string,
     portSeed: number,
     tempoHack: number,
     tempoWeak: number,

@@ -210,7 +210,7 @@ function creaBatch(ns: NS, targetInfo: HwgwServerInfo, batchPort: number, calc: 
   const hackTime = calc.calcolaHackTime();
   const weakTime = calc.calcolaWeakTime();
   const growTime = calc.calcolaGrowTime();
-  return new HwgwBatch(targetInfo.name, batchPort, hackTime, weakTime, growTime, 200, 500);
+  return new HwgwBatch(batchPort, hackTime, weakTime, growTime, 200, 500);
 }
 // -------------------------------------------------------
 // -------------- BATCHING FUNCTION END ------------------
