@@ -47,7 +47,6 @@ function mainWGw() {
     const endGrow = sleepGrow + tempoGrow;
     const sleepWeakGrow = endGrow - tempoWeak + scritpDelay;
     const endWeakGrow = sleepWeakGrow + tempoWeak;
-
     // console.log('sleep hack:', sleepHack);
     // console.log('sleep weak hack:', batchStartSleep);
     // console.log('sleep grow:', sleepGrow);

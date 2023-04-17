@@ -31,6 +31,8 @@ export class ServerInfo {
 
     if (this.hackXp > 0) {
       this.farmScore = this.hackXp / (this.weakenTm / 1000);
+    } else if (this.name == 'joesguns') {
+      this.farmScore = 0;
     }
   }
 }

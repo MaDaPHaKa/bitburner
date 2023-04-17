@@ -99,7 +99,7 @@ export class HwgOpsCalulator {
       if (startingMoney) this.targetServer.moneyAvailable = startingMoney;
       return this.ns.formulas.hacking.growThreads(this.targetServer, this.ns.getPlayer(), this.target.maxMoney, cores);
     } else {
-      const currentMoney = this.target.currentMoney;
+      const currentMoney = startingMoney ? startingMoney : this.target.currentMoney;
       const rate = this.target.maxMoney / (currentMoney > 0 ? currentMoney : 1);
       return this.ns.growthAnalyze(this.target.name, rate, cores);
     }

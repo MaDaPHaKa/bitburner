@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { MAX_RAM, WG_COST, XP_FARMER_SERVER_PREFIX, XP_FARM_SCRIPT_NAME } from 'const/files';
+import { FARM_SERVER_GB, MAX_RAM, SERVER_GB, WG_COST, XP_FARMER_SERVER_PREFIX, XP_FARM_SCRIPT_NAME } from 'const/files';
 import { ServerInfo } from 'utils/server-info';
 import { loadTargetInfo } from 'utils/target-loader';
 
@@ -12,7 +12,7 @@ export async function main(ns: NS) {
   });
   let i = 0;
   for (let farmer of servers) {
-    ns.exec(XP_FARM_SCRIPT_NAME, farmer, Math.floor(MAX_RAM / WG_COST), targets[0].name);
+    ns.exec(XP_FARM_SCRIPT_NAME, farmer, Math.floor(FARM_SERVER_GB / WG_COST), targets[0].name);
     i++;
   }
 }

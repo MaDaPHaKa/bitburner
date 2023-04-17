@@ -49,7 +49,9 @@ export class ServerManager {
       return;
     }
     this.aggiornaUtilizzo();
-    const availableServers = this.servers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread);
+    let availableServers = this.servers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread * threadNeeded);
+    if (availableServers.length <= 0)
+      availableServers = this.servers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread);
     for (let server of availableServers) {
       const freeThreads = server.freeRam / ramPerThread;
       let threadToLaunch = Math.floor(freeThreads > threadNeeded ? threadNeeded : freeThreads);

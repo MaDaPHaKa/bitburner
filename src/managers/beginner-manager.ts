@@ -65,7 +65,7 @@ function checkAndStartBeginnerHackHome(ns: NS, target: string) {
   const scriptRam = ns.getScriptRam('beginner-hack.js');
   const serverUsedRam = ns.getServerUsedRam('home');
   const serverRam = ns.getServerMaxRam('home') - 4.5;
-  const threads = Math.floor((serverRam - serverUsedRam - 50) / scriptRam);
+  const threads = Math.floor((serverRam - serverUsedRam) / scriptRam);
   if (!isNaN(threads) && threads > 0) {
     ns.exec('beginner-hack.js', 'home', threads, target, threads);
   }

@@ -1,4 +1,4 @@
-import { NS } from '@ns';
+import { NS, Server } from '@ns';
 import { HOME_FREE_RAM_TO_KEEP } from 'const/files';
 
 export class ServerData {
@@ -6,12 +6,15 @@ export class ServerData {
   name: string;
   freeRam: number;
   maxRam: number;
+  cores = 1;
 
   constructor(ns: NS, name: string) {
     this.ns = ns;
     this.name = name;
-    this.maxRam = this.ns.getServerMaxRam(name);
+    const nsServer: Server = ns.getServer(name);
+    this.maxRam = nsServer.maxRam;
     this.freeRam = this.maxRam - this.ns.getServerUsedRam(name);
+    this.cores = nsServer.cpuCores;
   }
 
   calcolaThreadRunnabili(costoScript: number): number {
@@ -19,6 +22,7 @@ export class ServerData {
   }
 
   aggiornaServer() {
+    this.maxRam = this.ns.getServerMaxRam(this.name);
     if (this.name == 'home') this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name) - HOME_FREE_RAM_TO_KEEP;
     else this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name);
   }

@@ -7,9 +7,10 @@ import { ScanResult } from 'scan-and-nuke/scan-result';
 export async function main(ns: NS) {
   while (true) {
     ns.disableLog('ALL');
+    ns.enableLog('sleep');
     const scanResult: ScanResult = new ScanResult(ns);
     await new FileHandler(ns, SERVERS_FILENAME).write(scanResult.hackable, 'w');
     await new FileHandler(ns, ALL_SERVERS_FILENAME).write(scanResult.allServers, 'w');
-    await ns.sleep(600000);
+    await ns.sleep(60000);
   }
 }

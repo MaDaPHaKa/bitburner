@@ -10,7 +10,7 @@ export const HWGW_MANAGER_NAME = '/managers/hwgw-manager.js';
 
 // COPY TO SERVER SCRIPTS
 export const MYSELF = '/const/files.js';
-export const BEGINNER_HACK_SCRIPT_NAME = '/beginner-hack.js';
+export const BEGINNER_HACK_SCRIPT_NAME = 'beginner-hack.js';
 export const SERVER_GROW_SCRIPT_NAME = '/mono/server-grow.js';
 export const SERVER_HACK_SCRIPT_NAME = '/mono/server-hack.js';
 export const SERVER_WEAKEN_SCRIPT_NAME = '/mono/server-weaken.js';
@@ -48,9 +48,13 @@ export const HWGW_PORT_1 = 1;
 export const HWGW_PORT_2 = 2;
 export const HWGW_PORT_3 = 3;
 export const HWGW_PORT_4 = 4;
-export const HWGW_PREP_PORT = 250;
+export const HWGW_PREP_PORT_1 = 250;
+export const HWGW_PREP_PORT_2 = 251;
+export const HWGW_PREP_PORT_3 = 252;
+export const HWGW_PREP_PORT_4 = 253;
 export const EMPTY_PORT_DATA = 'NULL PORT DATA';
-export const HWGW_PORTS = [HWGW_PORT_1, HWGW_PORT_2, HWGW_PORT_3, HWGW_PORT_4, HWGW_PREP_PORT];
+export const HWGW_PORTS = [HWGW_PORT_1, HWGW_PORT_2, HWGW_PORT_3, HWGW_PORT_4];
+export const HWGW_PREP_PORTS = [HWGW_PREP_PORT_1, HWGW_PREP_PORT_2, HWGW_PREP_PORT_3, HWGW_PREP_PORT_4];
 
 // FILE CONSTANTS
 export const ALL_SERVERS_FILENAME = '/data/all_servers.txt';
@@ -61,9 +65,13 @@ export const SERVERS_DETAIL_FILENAME = '/data/servers_detail.txt';
 export const SERVER_NAME_PREFIX = 'srv-';
 export const XP_FARMER_SERVER_PREFIX = 'farmer-srv-';
 export const HOME_FREE_RAM_TO_KEEP = 40;
-export const SERVER_GB = 1048576;
+export const MIN_HOME_RAM_TO_RUN_HWGW = 1024;
 export const MAX_RAM = 1048576;
-export const SERVER_GB_WANTED = 1048576;
-export const MAX_SERVER_NUM = 1;
-
+export const SERVER_GB = 4096;
+export const SERVER_GB_WANTED = 8192;
+export const MAX_SERVER_NUM = 15;
 export const MAX_FARMER_SERVER_NUM = 10;
+export const FARM_SERVER_GB = 16384;
+
+// OTHER
+export const HOME_SERVER_CARROZZATO = false;

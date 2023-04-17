@@ -1,5 +1,6 @@
 import { NS } from '@ns';
 import {
+  FARM_SERVER_GB,
   MAX_FARMER_SERVER_NUM,
   MAX_RAM,
   MAX_SERVER_NUM,
@@ -15,18 +16,29 @@ export async function main(ns: NS) {
   let totalCost = 0;
   let farmingCost = 0;
   let serverCost = 0;
+
   for (let server of purch) {
     if (server == 'home') continue;
     const serverRam = ns.getServerMaxRam(server);
-    totalCost += ns.getPurchasedServerUpgradeCost(server, SERVER_GB_WANTED);
+    const cost = ns.getPurchasedServerUpgradeCost(server, SERVER_GB_WANTED);
+    serverCost += cost;
+    totalCost += cost;
   }
   for (let count = purch.length; count < MAX_SERVER_NUM; count++) {
     const cost = ns.getPurchasedServerCost(SERVER_GB_WANTED);
     serverCost += cost;
     totalCost += cost;
   }
+
+  for (let server of farm) {
+    if (server == 'home') continue;
+    const serverRam = ns.getServerMaxRam(server);
+    const cost = ns.getPurchasedServerUpgradeCost(server, FARM_SERVER_GB);
+    farmingCost += cost;
+    totalCost += cost;
+  }
   for (let count = farm.length; count < MAX_FARMER_SERVER_NUM; count++) {
-    const cost = ns.getPurchasedServerCost(MAX_RAM);
+    const cost = ns.getPurchasedServerCost(FARM_SERVER_GB);
     farmingCost += cost;
     totalCost += cost;
   }
@@ -36,7 +48,7 @@ export async function main(ns: NS) {
     ns.formatNumber(serverCost, 3)
   );
   ns.tprint(
-    'costo per arrivare a ' + MAX_FARMER_SERVER_NUM + ' xp farm server da ' + MAX_RAM + ' : ',
+    'costo per arrivare a ' + MAX_FARMER_SERVER_NUM + ' xp farm server da ' + FARM_SERVER_GB + ' : ',
     ns.formatNumber(farmingCost, 3)
   );
   ns.tprint('costo totale: ', ns.formatNumber(totalCost, 3));
