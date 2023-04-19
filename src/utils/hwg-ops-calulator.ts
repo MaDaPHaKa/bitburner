@@ -51,7 +51,7 @@ export class HwgOpsCalulator {
         ? this.ns.formulas.hacking.hackPercent(this.targetServer, this.ns.getPlayer())
         : this.ns.hackAnalyze(this.target.name)) * maxMoney;
     const minWanted = maxMoney * percentage;
-    const rate = (maxMoney - minWanted) / moneyPerThread;
+    const rate = minWanted / moneyPerThread;
     const threads = Math.max(1, Math.floor(rate));
     return threads;
   }

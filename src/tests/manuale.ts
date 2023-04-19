@@ -9,5 +9,5 @@ export async function main(ns: NS) {
   //   const xpNumber: number = i - 7;
   //   ns.renamePurchasedServer(SERVER_NAME_PREFIX + i, XP_FARMER_SERVER_PREFIX + xpNumber);
   // }
-  ns.renamePurchasedServer(XP_FARMER_SERVER_PREFIX + "-6",XP_FARMER_SERVER_PREFIX + "1");
+  // ns.renamePurchasedServer(XP_FARMER_SERVER_PREFIX + "-6",XP_FARMER_SERVER_PREFIX + "1");
 }

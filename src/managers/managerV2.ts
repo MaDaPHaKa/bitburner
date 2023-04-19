@@ -25,10 +25,10 @@ export async function main(ns: NS) {
   ns.disableLog('getHackingLevel');
   ns.disableLog('exec');
   if (debug) ns.tail();
-  const servers: string[] = ns.getPurchasedServers().filter((el) => el != XP_FARMER_SERVER_PREFIX);
-  servers.unshift('home');
-  const serverManager: ServerManager = new ServerManager(ns, servers);
   while (true) {
+    const servers: string[] = ns.getPurchasedServers().filter((el) => el != XP_FARMER_SERVER_PREFIX);
+    servers.unshift('home');
+    const serverManager: ServerManager = new ServerManager(ns, servers);
     const allTargets: string[] = await loadTargetNames(ns);
     // if not debug mode start "weakmyself" process on each target
     if (!debug) checkAutoWeak(ns, allTargets);

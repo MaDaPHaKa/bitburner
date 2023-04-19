@@ -12,7 +12,7 @@ export class ServerInfo {
   minHackLevel = 10000;
   currHackLevel = 0;
   score = -1;
-  hgwgScore = -1;
+  hwgwScore = -1;
   farmScore = -1;
   constructor() {}
 
@@ -26,7 +26,7 @@ export class ServerInfo {
       this.score = -1;
     }
     if (this.hackChance > 0.8) {
-      this.hgwgScore = this.score;
+      this.hwgwScore = this.score;
     }
 
     if (this.hackXp > 0) {

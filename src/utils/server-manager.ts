@@ -38,34 +38,6 @@ export class ServerManager {
     }
   }
 
-  avviaHwgwScript(
-    scriptName: string,
-    threadNeeded: number,
-    ramPerThread: number,
-    debug = false,
-    ...args: (boolean | string | number)[]
-  ): void {
-    if (threadNeeded <= 0) {
-      return;
-    }
-    this.aggiornaUtilizzo();
-    let availableServers = this.servers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread * threadNeeded);
-    if (availableServers.length <= 0)
-      availableServers = this.servers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread);
-    for (let server of availableServers) {
-      const freeThreads = server.freeRam / ramPerThread;
-      let threadToLaunch = Math.floor(freeThreads > threadNeeded ? threadNeeded : freeThreads);
-      if (threadToLaunch > 0 && threadToLaunch < 1) threadToLaunch = 1;
-      if (threadToLaunch <= 0) break;
-      this.ns.exec(scriptName, server.name, threadToLaunch, ...args);
-      server.aggiornaServer();
-      threadNeeded -= threadToLaunch;
-      if (threadNeeded <= 0) {
-        break;
-      }
-    }
-  }
-
   aggiornaUtilizzo(clearTargets = false) {
     if (clearTargets) {
       this.hackTargets = [];

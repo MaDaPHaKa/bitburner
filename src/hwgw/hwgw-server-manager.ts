@@ -4,11 +4,11 @@ import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from 'utils/server-data';
+import { HwgwServerBatch } from './hwgw-server-batch';
 import {
   HWGW_SERVER_GROW_SCRIPT,
   HWGW_SERVER_HACK_SCRIPT,
   HWGW_SERVER_WEAKEN_SCRIPT,
-  H_COST,
   WG_COST,
   XP_FARMER_SERVER_PREFIX,
 } from '/const/files';
@@ -33,113 +33,59 @@ export class HwgwServerManager {
     }
   }
 
-  avviaHwgwBatch(target: HwgwServerInfo, batch: HwgwBatch, calc: HwgOpsCalulator, randomArg: number): void {
-    const hackArgs = [target.name, batch.sleepHack, randomArg];
-    const hackWeakArgs = [target.name, batch.sleepWeakHack, randomArg];
-    const growArgs = [target.name, batch.sleepGrow, randomArg];
-    const growWeakArgs = [target.name, batch.sleepWeakGrow, batch.batchPort, randomArg];
+  async avviaHwgwBatch(
+    target: HwgwServerInfo,
+    batch: HwgwBatch,
+    calc: HwgOpsCalulator,
+    randomArg: number,
+    portSeed: number
+  ): Promise<boolean> {
+    const serverBatches: HwgwServerBatch[] = [];
     this.aggiornaUtilizzo();
-    let hackWeakThreads = batch.hackWeakThreads;
-    let growThreads = batch.growThreads;
-    let growWeakThreads = batch.growWeakThreads;
-    let hackWeakServer: ServerData | undefined;
-    let growServer: ServerData | undefined;
-    let growWeakServer: ServerData | undefined;
-    if (this.homeServer.cores > 1) {
-      const hackWeakHomeRam = batch.hackWeakHomeThreads * WG_COST;
-      const growHomeRam = batch.growHomeThreads * WG_COST;
-      const growWeakHomeRam = batch.growWeakHomeThreads * WG_COST;
-      let homeFreeRam = this.homeServer.freeRam;
-      if (homeFreeRam > hackWeakHomeRam) {
-        hackWeakServer = this.homeServer;
-        hackWeakThreads = batch.hackWeakHomeThreads;
-        homeFreeRam -= hackWeakHomeRam;
-      }
-      if (homeFreeRam > growHomeRam) {
-        growServer = this.homeServer;
-        growThreads = batch.growHomeThreads;
-        homeFreeRam -= growHomeRam;
-      }
-      if (homeFreeRam > growWeakHomeRam) {
-        growWeakServer = this.homeServer;
-        growWeakThreads = batch.growWeakHomeThreads;
-        homeFreeRam -= growWeakHomeRam;
+    let iteration = 0;
+    let serverBatch = batch.creaServerBatch(this.ns, this.homeServer, target, calc, iteration);
+    if (serverBatch.canRun) {
+      serverBatches.push(serverBatch);
+      iteration++;
+    }
+    for (let server of this.servers) {
+      serverBatch = batch.creaServerBatch(this.ns, server, target, calc, iteration);
+      if (serverBatch.canRun) {
+        serverBatches.push(serverBatch);
+        iteration++;
       }
     }
-    this.avviaHwgwScript(HWGW_SERVER_HACK_SCRIPT, batch.hackThreads, H_COST, undefined, ...hackArgs);
-    this.avviaHwgwScript(HWGW_SERVER_WEAKEN_SCRIPT, hackWeakThreads, WG_COST, hackWeakServer, ...hackWeakArgs);
-    this.avviaHwgwScript(HWGW_SERVER_GROW_SCRIPT, growThreads, WG_COST, growServer, ...growArgs);
-    this.avviaHwgwScript(HWGW_SERVER_WEAKEN_SCRIPT, growWeakThreads, WG_COST, growWeakServer, ...growWeakArgs);
-  }
+    if (serverBatches.length <= 0) return false;
+    for (let i = 0; i < serverBatches.length; i++) {
+      const serverBatch = serverBatches[i];
+      this.ns.exec(
+        HWGW_SERVER_HACK_SCRIPT,
+        serverBatch.server.name,
+        serverBatch.hackThreads,
+        ...serverBatch.getHackArgs(randomArg)
+      );
+      this.ns.exec(
+        HWGW_SERVER_WEAKEN_SCRIPT,
+        serverBatch.server.name,
+        serverBatch.hackWeakThreads,
+        ...serverBatch.getHackWeakArgs(randomArg)
+      );
 
-  avviaWgwBatch(target: string, batch: WgwBatch): void {
-    const weakArgs = [target];
-    const growArgs = [target, batch.sleepGrow];
-    const growWeakArgs = [target, batch.sleepWeakGrow, batch.batchPort];
-    this.aggiornaUtilizzo();
-    let weakThreads = batch.weakThreads;
-    let growThreads = batch.growThreads;
-    let growWeakThreads = batch.growWeakThreads;
-    let hackWeakServer: ServerData | undefined;
-    let growServer: ServerData | undefined;
-    let growWeakServer: ServerData | undefined;
-    if (this.homeServer.cores > 1) {
-      const weakHomeRam = batch.weakHomeThreads * WG_COST;
-      const growHomeRam = batch.growHomeThreads * WG_COST;
-      const growWeakHomeRam = batch.growWeakHomeThreads * WG_COST;
-      let homeFreeRam = this.homeServer.freeRam;
-      if (homeFreeRam > weakHomeRam) {
-        hackWeakServer = this.homeServer;
-        weakThreads = batch.weakHomeThreads;
-        homeFreeRam -= weakHomeRam;
-      }
-      if (homeFreeRam > growHomeRam) {
-        growServer = this.homeServer;
-        growThreads = batch.growHomeThreads;
-        homeFreeRam -= growHomeRam;
-      }
-      if (homeFreeRam > growWeakHomeRam) {
-        growWeakServer = this.homeServer;
-        growWeakThreads = batch.growWeakHomeThreads;
-        homeFreeRam -= growWeakHomeRam;
-      }
-    }
-    this.avviaHwgwScript(HWGW_SERVER_WEAKEN_SCRIPT, weakThreads, WG_COST, hackWeakServer, ...weakArgs);
-    this.avviaHwgwScript(HWGW_SERVER_GROW_SCRIPT, growThreads, WG_COST, growServer, ...growArgs);
-    this.avviaHwgwScript(HWGW_SERVER_WEAKEN_SCRIPT, growWeakThreads, WG_COST, growWeakServer, ...growWeakArgs);
-  }
+      this.ns.exec(
+        HWGW_SERVER_GROW_SCRIPT,
+        serverBatch.server.name,
+        serverBatch.growThreads,
+        ...serverBatch.getGrowArgs(randomArg)
+      );
 
-  avviaHwgwScript(
-    scriptName: string,
-    threadNeeded: number,
-    ramPerThread: number,
-    server: ServerData | undefined,
-    ...args: (boolean | string | number)[]
-  ): void {
-    if (threadNeeded <= 0) {
-      return;
+      const growWeakArgs =
+        i == serverBatches.length - 1
+          ? serverBatch.getGrowWeakArgs(randomArg, portSeed)
+          : serverBatch.getGrowWeakArgs(randomArg);
+      this.ns.exec(HWGW_SERVER_WEAKEN_SCRIPT, serverBatch.server.name, serverBatch.growWeakThreads, ...growWeakArgs);
+      await this.ns.sleep(1);
     }
-    if (server) {
-      this.ns.exec(scriptName, server.name, threadNeeded, ...args);
-      return;
-    }
-    this.aggiornaUtilizzo();
-    let availableServers = this.servers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread * threadNeeded);
-    if (availableServers.length > 0) {
-      this.ns.exec(scriptName, availableServers[0].name, threadNeeded, ...args);
-      return;
-    }
-    for (let server of availableServers) {
-      const freeThreads = server.freeRam / ramPerThread;
-      let threadToLaunch = Math.floor(freeThreads > threadNeeded ? threadNeeded : freeThreads);
-      if (threadToLaunch <= 1) break;
-      this.ns.exec(scriptName, server.name, threadToLaunch, ...args);
-      server.aggiornaServer();
-      threadNeeded -= threadToLaunch;
-      if (threadNeeded <= 0) {
-        break;
-      }
-    }
+    return true;
   }
 
   aggiornaUtilizzo() {
@@ -150,5 +96,59 @@ export class HwgwServerManager {
 
   serverLiberi(): boolean {
     return this.servers.find((el) => el.freeRam > 0) !== undefined;
+  }
+
+  canRun(ramNecessaria: number): boolean {
+    this.aggiornaUtilizzo();
+    let ramDisponibile = this.homeServer.freeRam;
+    for (let server of this.servers) {
+      ramDisponibile += server.freeRam;
+    }
+    return ramDisponibile > ramNecessaria;
+  }
+
+  // WGW Batching
+  avviaWgwBatch(target: string, batch: WgwBatch): void {
+    const weakArgs = [target];
+    const growArgs = [target, batch.sleepGrow];
+    const growWeakArgs = [target, batch.sleepWeakGrow, batch.batchPort];
+    this.aggiornaUtilizzo();
+    let weakThreads = batch.weakThreads;
+    let growThreads = batch.growThreads;
+    let growWeakThreads = batch.growWeakThreads;
+    this.avviaWgwScript(HWGW_SERVER_WEAKEN_SCRIPT, weakThreads, WG_COST, ...weakArgs);
+    this.avviaWgwScript(HWGW_SERVER_GROW_SCRIPT, growThreads, WG_COST, ...growArgs);
+    this.avviaWgwScript(HWGW_SERVER_WEAKEN_SCRIPT, growWeakThreads, WG_COST, ...growWeakArgs);
+  }
+  avviaWgwScript(
+    scriptName: string,
+    threadNeeded: number,
+    ramPerThread: number,
+    ...args: (boolean | string | number)[]
+  ): void {
+    if (threadNeeded <= 0) {
+      this.ns.print('thread necessari == 0... non dovrebbe succedere');
+      return;
+    }
+    this.aggiornaUtilizzo();
+    let allServers = this.servers.slice(0);
+    allServers.unshift(this.homeServer);
+    let availableServers = allServers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread * threadNeeded);
+    if (availableServers.length > 0) {
+      this.ns.exec(scriptName, availableServers[0].name, threadNeeded, ...args);
+      return;
+    }
+    availableServers = allServers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread);
+    for (let server of allServers) {
+      const freeThreads = server.freeRam / ramPerThread;
+      let threadToLaunch = Math.floor(freeThreads > threadNeeded ? threadNeeded : freeThreads);
+      if (threadToLaunch <= 1) break;
+      this.ns.exec(scriptName, server.name, threadToLaunch, ...args);
+      server.aggiornaServer();
+      threadNeeded -= threadToLaunch;
+      if (threadNeeded <= 0) {
+        break;
+      }
+    }
   }
 }

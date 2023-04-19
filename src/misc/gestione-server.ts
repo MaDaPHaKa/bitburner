@@ -21,26 +21,34 @@ export async function main(ns: NS) {
     if (server == 'home') continue;
     const serverRam = ns.getServerMaxRam(server);
     const cost = ns.getPurchasedServerUpgradeCost(server, SERVER_GB_WANTED);
-    serverCost += cost;
-    totalCost += cost;
+    if (cost > 0) {
+      serverCost += cost;
+      totalCost += cost;
+    }
   }
   for (let count = purch.length; count < MAX_SERVER_NUM; count++) {
     const cost = ns.getPurchasedServerCost(SERVER_GB_WANTED);
-    serverCost += cost;
-    totalCost += cost;
+    if (cost > 0) {
+      serverCost += cost;
+      totalCost += cost;
+    }
   }
 
   for (let server of farm) {
     if (server == 'home') continue;
     const serverRam = ns.getServerMaxRam(server);
     const cost = ns.getPurchasedServerUpgradeCost(server, FARM_SERVER_GB);
-    farmingCost += cost;
-    totalCost += cost;
+    if (cost > 0) {
+      farmingCost += cost;
+      totalCost += cost;
+    }
   }
   for (let count = farm.length; count < MAX_FARMER_SERVER_NUM; count++) {
     const cost = ns.getPurchasedServerCost(FARM_SERVER_GB);
-    farmingCost += cost;
-    totalCost += cost;
+    if (cost > 0) {
+      farmingCost += cost;
+      totalCost += cost;
+    }
   }
 
   ns.tprint(

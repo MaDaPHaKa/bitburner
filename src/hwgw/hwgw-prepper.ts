@@ -10,6 +10,7 @@ import { loadTargetInfo } from 'utils/target-loader';
 export async function main(ns: NS) {
   ns.disableLog('ALL');
   ns.enableLog('exec');
+  // ns.tail();
   const toPrep = ns.args[0] as string;
   const portSeed = ns.args[1] != undefined ? (ns.args[1] as number) : new Date().getTime();
   const target: HwgwServerInfo = new HwgwServerInfo(

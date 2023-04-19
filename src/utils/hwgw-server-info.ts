@@ -8,10 +8,14 @@ export class HwgwServerInfo {
   currentSec: number = 100;
   currentMoney: number = 0;
   prepped = false;
+  score = -1;
+  hwgwScore = -1;
   constructor(ns: NS, target: ServerInfo) {
     this.name = target.name;
     this.minSecurity = target.minSecurity;
     this.maxMoney = target.maxMoney;
+    this.score = target.score;
+    this.hwgwScore = target.hwgwScore;
     this.ricalcolaVariabili(ns);
   }
 

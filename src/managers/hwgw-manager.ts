@@ -12,6 +12,7 @@ import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerInfo } from 'utils/server-info';
 import { loadTargetInfo } from 'utils/target-loader';
+import { WgwBatch } from '/hwgw/wgw-batch';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -26,7 +27,7 @@ export async function main(ns: NS) {
   ns.disableLog('exec');
   ns.disableLog('sleep');
 
-  let batches: Map<string, HwgwBatch> = new Map();
+  let batches: Map<string, HwgwBatch> = new Map<string, HwgwBatch>();
   let preppin: string[] = [];
   for (let port of HWGW_PORTS) {
     ns.clearPort(port);
@@ -36,24 +37,29 @@ export async function main(ns: NS) {
   }
   while (true) {
     const serverManager: HwgwServerManager = new HwgwServerManager(ns);
+    preppin = checkPreppinPort(ns, preppin);
+    checkBatchingPorts(ns, batches);
     const serverInfo: HwgwServerInfo[] = ((await loadTargetInfo(ns)) as ServerInfo[]).map(
       (el) => new HwgwServerInfo(ns, el)
     );
+    // ns.print('lista full servers: ', serverInfo);
+    // ns.print('preppin: ', preppin);
     checkAutoWeak(
       ns,
       serverInfo.map((el) => el.name)
     );
-    preppin = checkPreppinPort(ns, preppin);
-    batches = checkBatchingPorts(ns, batches);
 
     const toPrep: HwgwServerInfo[] = serverInfo.filter(
       (el) => !el.prepped && (!batches.has(el.name) || !batches.get(el.name)?.running)
     );
-    const toBatch: HwgwServerInfo[] = serverInfo.filter((el) => el.prepped);
-
-    await prepServers(toPrep, preppin, ns);
-    batch(ns, toBatch, batches, serverManager);
-    await ns.sleep(2000);
+    const toBatch: HwgwServerInfo[] = serverInfo
+      .filter((el) => el.prepped)
+      .sort(function (a, b) {
+        return b.hwgwScore - a.hwgwScore;
+      });
+    await prepServers(ns, toPrep, preppin, serverManager);
+    batches = await batch(ns, toBatch, batches, serverManager);
+    await ns.sleep(5000);
   }
 }
 
@@ -61,17 +67,18 @@ export async function main(ns: NS) {
 // -------------- PORT CHECKING START ------------------
 // -----------------------------------------------------
 
-function checkBatchingPorts(ns: NS, batches: Map<string, HwgwBatch>): Map<string, HwgwBatch> {
-  if (batches.size <= 0) return batches;
+function checkBatchingPorts(ns: NS, batches: Map<string, HwgwBatch>): void {
+  if (batches.size <= 0) return;
   for (let port of HWGW_PORTS) {
     let portValue: string = ns.readPort(port) as string;
     while (portValue !== EMPTY_PORT_DATA) {
       const batch = batches.get(portValue);
-      if (batch != undefined) batch.running = false;
+      if (batch != undefined) {
+        batch.running = false;
+      }
       portValue = ns.readPort(port) as string;
     }
   }
-  return batches;
 }
 
 function checkPreppinPort(ns: NS, preppin: string[]): string[] {
@@ -94,32 +101,32 @@ function checkPreppinPort(ns: NS, preppin: string[]): string[] {
 // -------------- BATCHING FUNCTION START ------------------
 // ---------------------------------------------------------
 
-function batch(ns: NS, toBatch: HwgwServerInfo[], batches: Map<string, HwgwBatch>, serverManager: HwgwServerManager) {
+async function batch(
+  ns: NS,
+  toBatch: HwgwServerInfo[],
+  batches: Map<string, HwgwBatch>,
+  serverManager: HwgwServerManager
+): Promise<Map<string, HwgwBatch>> {
   let portSeed = 1;
   for (let target of toBatch) {
     let batch: HwgwBatch | undefined = batches.get(target.name);
     if (batch == undefined || !batch.running) {
       const calc = new HwgOpsCalulator(ns, target);
-      if (batch == undefined) {
-        batch = creaBatch(portSeed, calc);
-        batches.set(target.name, batch);
-      } else {
-        batch = creaBatch(portSeed, calc);
-        batches.set(target.name, batch);
-      }
-      batch.calcolaHwgwThreads(ns, target, calc);
-      serverManager.avviaHwgwBatch(target, batch, calc, new Date().getTime());
-      // batch.running = true;
+      batch = creaBatch(calc);
+      batch.running = await serverManager.avviaHwgwBatch(target, batch, calc, new Date().getTime(), portSeed);
+      batches = batches.set(target.name, batch);
       portSeed++;
+      await ns.sleep(1);
     }
   }
+  return batches;
 }
 
-function creaBatch(batchPort: number, calc: HwgOpsCalulator) {
+function creaBatch(calc: HwgOpsCalulator) {
   const hackTime = calc.calcolaHackTime();
   const weakTime = calc.calcolaWeakTime();
   const growTime = calc.calcolaGrowTime();
-  return new HwgwBatch(batchPort, hackTime, weakTime, growTime, 200, 500);
+  return new HwgwBatch(hackTime, weakTime, growTime);
 }
 // -------------------------------------------------------
 // -------------- BATCHING FUNCTION END ------------------
@@ -129,11 +136,23 @@ function creaBatch(batchPort: number, calc: HwgOpsCalulator) {
 // -------------- PREPPIN FUNCTION START ------------------
 // --------------------------------------------------------
 
-async function prepServers(toPrep: HwgwServerInfo[], preppin: string[], ns: NS) {
+async function prepServers(ns: NS, toPrep: HwgwServerInfo[], preppin: string[], serverMgr: HwgwServerManager) {
   let portSeed = 1;
   for (let daPreparare of toPrep) {
     if (preppin.includes(daPreparare.name)) continue;
-    ns.exec(HWGW_PREP_SCRIPT_NAME, 'home', 1, daPreparare.name, portSeed);
+    serverMgr.aggiornaUtilizzo();
+    if (!serverMgr.serverLiberi()) return;
+
+    const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, daPreparare);
+    const weakTime = calc.calcolaWeakTime();
+    const growTime = calc.calcolaGrowTime();
+
+    const batch: WgwBatch = new WgwBatch(portSeed, weakTime, growTime);
+    batch.calcolaWgwThreads(ns, daPreparare, calc);
+
+    const ramNecessaria = batch.getNeededRam();
+    if (!serverMgr.canRun(ramNecessaria)) return;
+    serverMgr.avviaWgwBatch(daPreparare.name, batch);
     preppin.push(daPreparare.name);
     portSeed++;
   }

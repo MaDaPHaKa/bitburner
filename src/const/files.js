@@ -41,7 +41,12 @@ export const FILES_TO_COPY = [
 // NUMBER CONSTANTS
 export const WG_COST = 1.75;
 export const H_COST = 1.7;
+// DEFAULT MONEY % TO HACK
 export const HWGW_MONEY_PERCENTAGE = 0.8;
+// MIN MONEY % TO HACK, IF NOT POSSIBLE SKIP TARGET\SERVER
+export const HWGW_MONEY_MIN_PERCENTAGE = 0.2;
+// % TO HACK DIFF TO LOWER
+export const HWGW_MONEY_ITERATION_PERCENTAGE = 0.05;
 
 // PORTS CONSTANTS
 export const HWGW_PORT_1 = 1;
@@ -67,11 +72,11 @@ export const XP_FARMER_SERVER_PREFIX = 'farmer-srv-';
 export const HOME_FREE_RAM_TO_KEEP = 40;
 export const MIN_HOME_RAM_TO_RUN_HWGW = 1024;
 export const MAX_RAM = 1048576;
-export const SERVER_GB = 4096;
-export const SERVER_GB_WANTED = 8192;
-export const MAX_SERVER_NUM = 15;
-export const MAX_FARMER_SERVER_NUM = 10;
-export const FARM_SERVER_GB = 16384;
+export const SERVER_GB = 262144;
+export const SERVER_GB_WANTED = 262144;
+export const MAX_SERVER_NUM = 10;
+export const MAX_FARMER_SERVER_NUM = 15;
+export const FARM_SERVER_GB = 1048576;
 
 // OTHER
 export const HOME_SERVER_CARROZZATO = false;
