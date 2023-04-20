@@ -92,10 +92,11 @@ export class HwgwServerManager {
     this.servers.forEach((el) => {
       el.aggiornaServer();
     });
+    this.homeServer.aggiornaServer();
   }
 
   serverLiberi(): boolean {
-    return this.servers.find((el) => el.freeRam > 0) !== undefined;
+    return this.servers.find((el) => el.freeRam > 0) !== undefined || this.homeServer.freeRam > 0;
   }
 
   canRun(ramNecessaria: number): boolean {
