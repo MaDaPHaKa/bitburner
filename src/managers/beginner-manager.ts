@@ -15,7 +15,7 @@ export async function main(ns: NS) {
   //     return b.cheesyScoreTest - a.cheesyScoreTest;
   //   })
   //   .map((el) => el.name);
-  const ordinati = [/*"joesguns", "foodnstuff",*/ 'n00dles'];
+  const ordinati = ["joesguns", "foodnstuff", 'n00dles'];
   while (true) {
     const servers = ns.getPurchasedServers().filter((el) => el != 'home' && el != XP_FARMER_SERVER_PREFIX);
     let i = 0;

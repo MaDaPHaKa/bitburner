@@ -59,7 +59,7 @@ export async function main(ns: NS) {
       });
     await prepServers(ns, toPrep, preppin, serverManager);
     batches = await batch(ns, toBatch, batches, serverManager);
-    await ns.sleep(5000);
+    await ns.sleep(2000);
   }
 }
 
