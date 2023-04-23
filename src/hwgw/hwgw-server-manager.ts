@@ -58,6 +58,7 @@ export class HwgwServerManager {
     if (serverBatches.length <= 0) return false;
     for (let i = 0; i < serverBatches.length; i++) {
       const serverBatch = serverBatches[i];
+      serverBatch.ricalcolaSleep();
       this.ns.exec(
         HWGW_SERVER_HACK_SCRIPT,
         serverBatch.server.name,

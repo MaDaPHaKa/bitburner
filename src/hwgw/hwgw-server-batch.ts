@@ -26,6 +26,8 @@ export class HwgwServerBatch {
   server: ServerData;
   target: HwgwServerInfo;
   calc: HwgOpsCalulator;
+  scriptDelay: number;
+  iteration: number;
   canRun = false;
 
   constructor(
@@ -42,6 +44,8 @@ export class HwgwServerBatch {
     this.target = target;
     this.server = server;
     this.calc = calc;
+    this.iteration = iteration;
+    this.scriptDelay = scriptDelay;
 
     this.sleepWeakHack = Math.max(0, Math.floor(scriptDelay * iteration * 4));
     this.sleepHack = Math.max(1, Math.floor(tempoWeak - tempoHack - scriptDelay + this.sleepWeakHack));
@@ -77,6 +81,18 @@ export class HwgwServerBatch {
     }
     growWeakArgs.push(randomArg);
     return growWeakArgs;
+  }
+
+  ricalcolaSleep() {
+    const tempoHack = this.calc.calcolaHackTime();
+    const tempoWeak = this.calc.calcolaWeakTime();
+    const tempoGrow = this.calc.calcolaGrowTime();
+    this.sleepWeakHack = Math.max(0, Math.floor(this.scriptDelay * this.iteration * 4));
+    this.sleepHack = Math.max(1, Math.floor(tempoWeak - tempoHack - this.scriptDelay + this.sleepWeakHack));
+    const endWeakHack = tempoWeak + this.sleepWeakHack;
+    this.sleepGrow = Math.max(1, Math.floor(endWeakHack - tempoGrow + this.scriptDelay));
+    const endGrow = this.sleepGrow + tempoGrow;
+    this.sleepWeakGrow = Math.max(1, Math.floor(endGrow - tempoWeak + this.scriptDelay));
   }
 
   private calcolaThreads(

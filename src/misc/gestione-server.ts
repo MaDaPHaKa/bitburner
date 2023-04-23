@@ -60,5 +60,7 @@ export async function main(ns: NS) {
     ns.formatNumber(farmingCost, 3)
   );
   ns.tprint('costo totale: ', ns.formatNumber(totalCost, 3));
-  ns.tprint('costo server a massima ram : ', ns.formatNumber(ns.getPurchasedServerCost(MAX_RAM), 3));
+  ns.tprint('costo server: ', ns.formatNumber(ns.getPurchasedServerCost(SERVER_GB_WANTED), 3));
+  ns.tprint('costo server farm: ', ns.formatNumber(ns.getPurchasedServerCost(FARM_SERVER_GB), 3));
+  ns.tprint('costo server a massima ram: ', ns.formatNumber(ns.getPurchasedServerCost(MAX_RAM), 3));
 }
