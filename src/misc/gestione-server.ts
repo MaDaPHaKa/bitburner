@@ -50,6 +50,7 @@ export async function main(ns: NS) {
       totalCost += cost;
     }
   }
+  ns.tprint('massima ram: ', ns.getPurchasedServerMaxRam());
 
   ns.tprint(
     'costo per arrivare a ' + MAX_SERVER_NUM + ' server da ' + SERVER_GB_WANTED + ' : ',

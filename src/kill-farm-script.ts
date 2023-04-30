@@ -3,8 +3,8 @@ import { XP_FARMER_SERVER_PREFIX } from './const/files';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  const servers = ns.getPurchasedServers();
+  const servers = ns.getPurchasedServers().filter((el) => el.startsWith(XP_FARMER_SERVER_PREFIX));
   for (let server of servers) {
-    if (server.startsWith(XP_FARMER_SERVER_PREFIX)) ns.killall(server);
+    ns.killall(server);
   }
 }
