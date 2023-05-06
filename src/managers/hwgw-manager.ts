@@ -1,18 +1,13 @@
 import { NS } from '@ns';
-import {
-  EMPTY_PORT_DATA,
-  HWGW_PORTS,
-  HWGW_PREP_PORTS,
-  HWGW_PREP_SCRIPT_NAME,
-  SERVER_WEAKEN_V2_SCRIPT_NAME,
-} from 'const/files';
+import { EMPTY_PORT_DATA, HWGW_PORTS, HWGW_PREP_PORTS } from 'const/hwgw';
+import { SERVER_WEAKEN_V2_SCRIPT_NAME } from 'const/scripts';
 import { HwgwBatch } from 'hwgw/hwgw-batch';
 import { HwgwServerManager } from 'hwgw/hwgw-server-manager';
+import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerInfo } from 'utils/server-info';
 import { loadTargetInfo } from 'utils/target-loader';
-import { WgwBatch } from '/hwgw/wgw-batch';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

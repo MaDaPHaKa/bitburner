@@ -1,5 +1,5 @@
 import { NS, Server } from '@ns';
-import { HOME_FREE_RAM_TO_KEEP } from 'const/files';
+import { HOME_FREE_RAM_TO_KEEP } from 'const/servers';
 
 export class ServerData {
   ns: NS;

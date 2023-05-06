@@ -1,17 +1,13 @@
 import { NS } from '@ns';
+import { WG_COST } from 'const/hwgw';
+import { HWGW_SERVER_GROW_SCRIPT, HWGW_SERVER_HACK_SCRIPT, HWGW_SERVER_WEAKEN_SCRIPT } from 'const/scripts';
+import { XP_FARMER_SERVER_PREFIX } from 'const/servers';
 import { HwgwBatch } from 'hwgw/hwgw-batch';
+import { HwgwServerBatch } from 'hwgw/hwgw-server-batch';
 import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from 'utils/server-data';
-import { HwgwServerBatch } from './hwgw-server-batch';
-import {
-  HWGW_SERVER_GROW_SCRIPT,
-  HWGW_SERVER_HACK_SCRIPT,
-  HWGW_SERVER_WEAKEN_SCRIPT,
-  WG_COST,
-  XP_FARMER_SERVER_PREFIX,
-} from '/const/files';
 
 export class HwgwServerManager {
   ns: NS;

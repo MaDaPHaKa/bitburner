@@ -1,12 +1,5 @@
 import { NS } from '@ns';
-import {
-  HWGW_MONEY_PERCENTAGE,
-  HWGW_PREP_PORT_1,
-  HWGW_PREP_PORT_2,
-  HWGW_PREP_PORT_3,
-  HWGW_PREP_PORT_4,
-  WG_COST,
-} from 'const/files';
+import { HWGW_PREP_PORT_1, HWGW_PREP_PORT_2, HWGW_PREP_PORT_3, HWGW_PREP_PORT_4, WG_COST } from 'const/hwgw';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 

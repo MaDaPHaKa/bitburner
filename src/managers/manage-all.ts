@@ -4,8 +4,8 @@ import {
   SERVER_HACK_SCRIPT_NAME,
   SERVER_WEAKEN_SCRIPT_NAME,
   SERVER_WEAKEN_V2_SCRIPT_NAME,
-  XP_FARMER_SERVER_PREFIX,
-} from 'const/files';
+} from 'const/scripts';
+import { XP_FARMER_SERVER_PREFIX } from 'const/servers';
 import { ServerInfo } from 'utils/server-info';
 import { loadTargetInfo, loadTargetNames } from 'utils/target-loader';
 

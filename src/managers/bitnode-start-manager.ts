@@ -1,7 +1,7 @@
 import { NS } from '@ns';
-import { BEGINNER_HACK_SCRIPT_NAME, BITNODE_MANAGER_NAME, SERVER_WEAKEN_V2_SCRIPT_NAME } from 'const/files';
-import { loadTargetInfo, loadTargetNames } from '/utils/target-loader';
+import { BEGINNER_HACK_SCRIPT_NAME, BITNODE_MANAGER_NAME, SERVER_WEAKEN_V2_SCRIPT_NAME } from 'const/scripts';
 import { ServerInfo } from '/utils/server-info';
+import { loadTargetInfo, loadTargetNames } from '/utils/target-loader';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

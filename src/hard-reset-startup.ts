@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { BITNODE_MANAGER_NAME, SCAN_SCRIPT_NAME } from 'const/files';
+import { BITNODE_MANAGER_NAME, SCAN_SCRIPT_NAME } from 'const/scripts';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

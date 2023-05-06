@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { MAX_SERVER_NUM, SERVER_GB, SERVER_NAME_PREFIX } from 'const/files';
+import { MAX_SERVER_NUM, SERVER_GB, SERVER_NAME_PREFIX } from 'const/servers';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

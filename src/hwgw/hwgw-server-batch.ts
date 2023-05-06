@@ -9,7 +9,7 @@ import {
   HWGW_PORT_4,
   H_COST,
   WG_COST,
-} from 'const/files';
+} from 'const/hwgw';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from '/utils/server-data';

@@ -1,5 +1,4 @@
 import { NS } from '@ns';
-import { XP_FARMER_SERVER_PREFIX } from 'const/files';
 import { HwgwServerManager } from 'hwgw/hwgw-server-manager';
 import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';

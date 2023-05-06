@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { FARM_SERVER_GB, MAX_FARMER_SERVER_NUM, MAX_RAM, XP_FARMER_SERVER_PREFIX } from 'const/files';
+import { FARM_SERVER_GB, MAX_FARMER_SERVER_NUM, XP_FARMER_SERVER_PREFIX } from 'const/servers';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

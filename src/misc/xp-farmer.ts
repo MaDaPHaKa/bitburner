@@ -1,5 +1,7 @@
 import { NS } from '@ns';
-import { FARM_SERVER_GB, MAX_RAM, SERVER_GB, WG_COST, XP_FARMER_SERVER_PREFIX, XP_FARM_SCRIPT_NAME } from 'const/files';
+import { WG_COST } from 'const/hwgw';
+import { XP_FARM_SCRIPT_NAME } from 'const/scripts';
+import { FARM_SERVER_GB, XP_FARMER_SERVER_PREFIX } from 'const/servers';
 import { ServerInfo } from 'utils/server-info';
 import { loadTargetInfo } from 'utils/target-loader';
 

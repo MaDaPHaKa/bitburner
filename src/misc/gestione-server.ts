@@ -7,7 +7,7 @@ import {
   SERVER_GB_WANTED,
   SERVER_NAME_PREFIX,
   XP_FARMER_SERVER_PREFIX,
-} from 'const/files';
+} from 'const/servers';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

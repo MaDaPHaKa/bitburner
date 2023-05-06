@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { SERVER_NAME_PREFIX, XP_FARMER_SERVER_PREFIX } from '/const/files';
+import { SERVER_NAME_PREFIX, XP_FARMER_SERVER_PREFIX } from 'const/servers';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
