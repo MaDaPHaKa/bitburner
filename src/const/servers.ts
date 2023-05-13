@@ -6,11 +6,11 @@ export const MIN_HOME_RAM_TO_RUN_HWGW = 1024;
 // MAX_RAM_STANDARD 1048576
 // MAX_RAM_CURRENT_BN 1048576
 export const MAX_RAM = 1048576;
-export const SERVER_GB = 32;
-export const SERVER_GB_WANTED = 32;
-export const MAX_SERVER_NUM = 25;
-export const MAX_FARMER_SERVER_NUM = 0;
-export const FARM_SERVER_GB = 8;
+export const SERVER_GB = 1048576;
+export const SERVER_GB_WANTED = 1048576;
+export const MAX_SERVER_NUM = 0;
+export const MAX_FARMER_SERVER_NUM = 25;
+export const FARM_SERVER_GB = 1048576;
 // 262144 | 131072 | 65536 | 32768 | 16384 | 8192
 
 // OTHER
