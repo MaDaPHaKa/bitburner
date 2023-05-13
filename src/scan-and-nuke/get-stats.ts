@@ -26,16 +26,12 @@ export async function main(ns: NS) {
       const tempInfo: HwgwServerInfo = new HwgwServerInfo(ns, infoObj);
       const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, tempInfo);
       infoObj.hackXp = calc.calcolaHackXp();
-      const growt = calc.calcolaGrowTime();
       const weakent = calc.calcolaWeakTime();
       const hackA = calc.calcolaHackPerc();
       const hackChance = calc.calcolaHackChance();
-      const hackT = calc.calcolaHackTime();
-      infoObj.growTm = growt;
       infoObj.weakenTm = weakent;
       infoObj.hackChance = hackChance;
       infoObj.hackValue = hackA;
-      infoObj.hackTm = hackT;
       infoObj.prepped = serverSecurity == minSecurity && serverMoney == maxMoney;
       infoObj.calcolaScore();
       serverInfo = [...serverInfo, infoObj];

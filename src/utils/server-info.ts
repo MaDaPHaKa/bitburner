@@ -2,9 +2,7 @@ export class ServerInfo {
   name: string = '';
   minSecurity = -1;
   maxMoney = -1;
-  growTm = Infinity;
   weakenTm = Infinity;
-  hackTm = Infinity;
   hackValue = 0;
   hackChance = 0;
   hackXp = 0;
@@ -20,7 +18,7 @@ export class ServerInfo {
     const hackLevelFactor = this.minHackLevel > this.currHackLevel * 0.65 ? 0.4 : 1;
 
     const upper = this.maxMoney * this.hackValue * this.currHackLevel;
-    const lower = (Math.max(this.hackTm, this.weakenTm, this.growTm) / 1000 / this.minSecurity) * this.minHackLevel;
+    const lower = (this.weakenTm / 1000 / this.minSecurity) * this.minHackLevel;
     this.score = (upper / lower) * hackLevelFactor;
     if (isNaN(this.score)) {
       this.score = -1;

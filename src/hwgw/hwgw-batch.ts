@@ -22,7 +22,7 @@ export class HwgwBatch {
     target: HwgwServerInfo,
     calc: HwgOpsCalulator,
     iteration = 0,
-    scriptDelay = 100
+    scriptDelay = 20
   ): HwgwServerBatch {
     return new HwgwServerBatch(
       this.tempoHack,

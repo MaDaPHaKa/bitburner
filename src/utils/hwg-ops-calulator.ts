@@ -17,14 +17,15 @@ export class HwgOpsCalulator {
     return Math.max(1, Math.ceil(threads));
   }
 
-  calcolaGrowTime(debug = false): number {
-    let time: number;
-    if (this.hasFormulas) {
-      time = this.ns.formulas.hacking.growTime(this.targetServer, this.ns.getPlayer());
-    } else {
-      time = this.ns.getGrowTime(this.target.name);
-    }
-    return Math.max(1, Math.ceil(time));
+  calcolaGrowTime(hackTime: number): number {
+    // NS Function calc, opted for hardcoded until i decide to rework the formulas management
+    // let time: number;
+    // if (this.hasFormulas) {
+    //   time = this.ns.formulas.hacking.growTime(this.targetServer, this.ns.getPlayer());
+    // } else {
+    //   time = this.ns.getGrowTime(this.target.name);
+    // }
+    return Math.max(1, Math.ceil(hackTime * 3.2));
   }
 
   calcolaWeakThread(cores: number = 1) {
@@ -56,42 +57,15 @@ export class HwgOpsCalulator {
     return threads;
   }
 
-  calcolaHackPerc() {
-    if (this.hasFormulas) {
-      return this.ns.formulas.hacking.hackPercent(this.targetServer, this.ns.getPlayer());
-    } else {
-      return this.ns.hackAnalyze(this.target.name);
-    }
-  }
-
-  calcolaHackTime() {
-    let time;
-    if (this.hasFormulas) {
-      time = this.ns.formulas.hacking.hackTime(this.targetServer, this.ns.getPlayer());
-    } else {
-      time = this.ns.getHackTime(this.target.name);
-    }
-    return Math.max(1, Math.ceil(time));
-  }
-
-  calcolaHackChance() {
-    if (this.hasFormulas) {
-      return this.ns.formulas.hacking.hackChance(this.targetServer, this.ns.getPlayer());
-    } else {
-      return this.ns.getHackTime(this.target.name);
-    }
-  }
-
-  calcolaHackXp() {
-    if (this.hasFormulas) {
-      return this.ns.formulas.hacking.hackExp(this.targetServer, this.ns.getPlayer());
-    } else {
-      return -1;
-    }
-  }
-
-  calcolaWeakThreadPerGrow(growThreads: number) {
-    return Math.ceil((growThreads * 0.004) / 0.05);
+  calcolaHackTime(weakTime: number) {
+    // NS Function calc, opted for hardcoded until i decide to rework the formulas management
+    // let time;
+    // if (this.hasFormulas) {
+    //   time = this.ns.formulas.hacking.hackTime(this.targetServer, this.ns.getPlayer());
+    // } else {
+    //   time = this.ns.getHackTime(this.target.name);
+    // }
+    return Math.max(1, Math.ceil(weakTime / 4));
   }
 
   private growtThreadsInternal(startingMoney: number | undefined, cores: number = 1, debug = false): number {
@@ -102,6 +76,30 @@ export class HwgOpsCalulator {
       const currentMoney = startingMoney ? startingMoney : this.target.currentMoney;
       const rate = this.target.maxMoney / (currentMoney > 0 ? currentMoney : 1);
       return this.ns.growthAnalyze(this.target.name, rate, cores);
+    }
+  }
+
+  // SPOSTARE
+  calcolaHackPerc() {
+    if (this.hasFormulas) {
+      return this.ns.formulas.hacking.hackPercent(this.targetServer, this.ns.getPlayer());
+    } else {
+      return this.ns.hackAnalyze(this.target.name);
+    }
+  }
+  calcolaHackXp() {
+    if (this.hasFormulas) {
+      return this.ns.formulas.hacking.hackExp(this.targetServer, this.ns.getPlayer());
+    } else {
+      return -1;
+    }
+  }
+
+  calcolaHackChance() {
+    if (this.hasFormulas) {
+      return this.ns.formulas.hacking.hackChance(this.targetServer, this.ns.getPlayer());
+    } else {
+      return this.ns.getHackTime(this.target.name);
     }
   }
 }

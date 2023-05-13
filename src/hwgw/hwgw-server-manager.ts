@@ -4,6 +4,7 @@ import { HWGW_SERVER_GROW_SCRIPT, HWGW_SERVER_HACK_SCRIPT, HWGW_SERVER_WEAKEN_SC
 import { XP_FARMER_SERVER_PREFIX } from 'const/servers';
 import { HwgwBatch } from 'hwgw/hwgw-batch';
 import { HwgwServerBatch } from 'hwgw/hwgw-server-batch';
+import { HwgwWorkerProp } from 'hwgw/hwgw-worker-prop';
 import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
@@ -22,7 +23,7 @@ export class HwgwServerManager {
     this.homeServer = new ServerData(ns, 'home');
     this.homeServer.aggiornaServer();
     for (let server of serverNames) {
-      if (server == 'home') continue;
+      if (server === 'home') continue;
       const serverData = new ServerData(ns, server);
       serverData.aggiornaServer();
       this.servers.push(serverData);
@@ -107,9 +108,15 @@ export class HwgwServerManager {
 
   // WGW Batching
   avviaWgwBatch(target: string, batch: WgwBatch): void {
-    const weakArgs = [target];
-    const growArgs = [target, batch.sleepGrow];
-    const growWeakArgs = [target, batch.sleepWeakGrow, batch.batchPort];
+    const growProp: HwgwWorkerProp = new HwgwWorkerProp(target, batch.growTime, batch.growEndTime, 0, 'PREP');
+    const weakProp: HwgwWorkerProp = new HwgwWorkerProp(target, batch.weakTime, batch.weakEndTime, 0, 'PREP');
+    weakProp.weakType = 1;
+    const growWeakProp: HwgwWorkerProp = new HwgwWorkerProp(target, batch.weakTime, batch.weakGrowEndTime, 0, 'PREP');
+    growWeakProp.weakType = 2;
+    growWeakProp.writePort = batch.batchPort;
+    const weakArgs = [JSON.stringify(weakProp)];
+    const growArgs = [JSON.stringify(growProp)];
+    const growWeakArgs = [JSON.stringify(growWeakProp)];
     this.aggiornaUtilizzo();
     let weakThreads = batch.weakThreads;
     let growThreads = batch.growThreads;

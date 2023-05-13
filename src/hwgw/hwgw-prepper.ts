@@ -22,7 +22,7 @@ export async function main(ns: NS) {
 
   const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, target);
   const weakTime = calc.calcolaWeakTime();
-  const growTime = calc.calcolaGrowTime();
+  const growTime = calc.calcolaGrowTime(calc.calcolaHackTime(weakTime));
 
   const batch: WgwBatch = new WgwBatch(portSeed, weakTime, growTime);
   batch.calcolaWgwThreads(ns, target, calc);

@@ -7,7 +7,8 @@
     "watch:remote": "bitburner-filesync",
     "watch:init": "node build/init.js",
     "watch:all": "concurrently npm:watch:transpile npm:watch:local npm:watch:remote",
-    "watch": "npm run watch:init && npm run watch:all"
+    "watch": "npm run watch:init && npm run watch:all",
+    "serve": "npm run watch:init && concurrently npm:watch:transpile npm:watch:local"
   },
   "author": "hydroflame, Hoekstraa, based on work by SlyCedix",
   "devDependencies": {

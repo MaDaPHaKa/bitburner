@@ -1,22 +1,11 @@
 // NUMBER CONSTANTS
 export const WG_COST = 1.75;
 export const H_COST = 1.7;
+export const HACK_SEC_INCREASE = 0.002;
+export const BATCH_BUFFER = 100;
 // DEFAULT MONEY % TO HACK
-export const HWGW_MONEY_PERCENTAGE = 0.8;
+export const HWGW_MONEY_PERCENTAGE = 0.99;
 // MIN MONEY % TO HACK, IF NOT POSSIBLE SKIP TARGET\SERVER
-export const HWGW_MONEY_MIN_PERCENTAGE = 0.2;
+export const HWGW_MONEY_MIN_PERCENTAGE = 0.05;
 // % TO HACK DIFF TO LOWER
-export const HWGW_MONEY_ITERATION_PERCENTAGE = 0.05;
-
-// PORTS CONSTANTS
-export const HWGW_PORT_1 = 1;
-export const HWGW_PORT_2 = 2;
-export const HWGW_PORT_3 = 3;
-export const HWGW_PORT_4 = 4;
-export const HWGW_PREP_PORT_1 = 250;
-export const HWGW_PREP_PORT_2 = 251;
-export const HWGW_PREP_PORT_3 = 252;
-export const HWGW_PREP_PORT_4 = 253;
-export const EMPTY_PORT_DATA = 'NULL PORT DATA';
-export const HWGW_PORTS = [HWGW_PORT_1, HWGW_PORT_2, HWGW_PORT_3, HWGW_PORT_4];
-export const HWGW_PREP_PORTS = [HWGW_PREP_PORT_1, HWGW_PREP_PORT_2, HWGW_PREP_PORT_3, HWGW_PREP_PORT_4];
+export const HWGW_MONEY_ITERATION_PERCENTAGE = 0.001;
