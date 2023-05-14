@@ -26,11 +26,6 @@ export const HWGW_SERVER_HACK_SCRIPT = '/hwgw/hack.js';
 export const HWGW_WORKER_PROP = '/hwgw/hwgw-worker-prop.js';
 export const CONST_PORTS = '/const/ports.js';
 export const LOGGER = '/logs/logger.js';
-
-// OTHER SCRIPTS
-export const HWGW_PREP_SCRIPT_NAME = '/hwgw/hwgw-prepper.js';
-export const LOG_MANAGER = '/logs/logmanager.js';
-
 export const FILES_TO_COPY = [
   PREP_SERVER_WEAKEN_SCRIPT,
   PREP_SERVER_GROW_SCRIPT,
@@ -45,3 +40,14 @@ export const FILES_TO_COPY = [
   CONST_PORTS,
   LOGGER,
 ];
+
+// CORP SCRIPTS
+export const CORP_STARTUP = '/corp/corp-starter.js';
+export const CORP_AGRI_SETUP = '/corp/agri/setup.js';
+export const CORP_AGRI_MANTAINANCE = '/corp/agri/man.js';
+export const CORP_TOBACCHI_STARTUP = '/corp/tob/setup.js';
+export const CORP_MANTAINANCE = '/corp/tob/man.js';
+
+// OTHER SCRIPTS
+export const HWGW_PREP_SCRIPT_NAME = '/hwgw/hwgw-prepper.js';
+export const LOG_MANAGER = '/logs/logmanager.js';
