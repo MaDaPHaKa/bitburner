@@ -16,12 +16,15 @@ export async function main(ns: NS) {
   let totalCost = 0;
   let farmingCost = 0;
   let serverCost = 0;
+  let upgradeCost = 0;
+  let farmUpgradeCost = 0;
 
   for (let server of purch) {
     if (server == 'home') continue;
     const serverRam = ns.getServerMaxRam(server);
     const cost = ns.getPurchasedServerUpgradeCost(server, SERVER_GB_WANTED);
     if (cost > 0) {
+      if (cost > upgradeCost) upgradeCost = cost;
       serverCost += cost;
       totalCost += cost;
     }
@@ -39,6 +42,7 @@ export async function main(ns: NS) {
     const serverRam = ns.getServerMaxRam(server);
     const cost = ns.getPurchasedServerUpgradeCost(server, FARM_SERVER_GB);
     if (cost > 0) {
+      if (cost > farmUpgradeCost) farmUpgradeCost = cost;
       farmingCost += cost;
       totalCost += cost;
     }
@@ -62,6 +66,8 @@ export async function main(ns: NS) {
   );
   ns.tprint('costo totale: ', ns.formatNumber(totalCost, 3));
   ns.tprint('costo server: ', ns.formatNumber(ns.getPurchasedServerCost(SERVER_GB_WANTED), 3));
+  ns.tprint('costo server upgrade: ', ns.formatNumber(upgradeCost, 3));
   ns.tprint('costo server farm: ', ns.formatNumber(ns.getPurchasedServerCost(FARM_SERVER_GB), 3));
+  ns.tprint('costo server farm upgrade: ', ns.formatNumber(farmUpgradeCost, 3));
   ns.tprint('costo server a massima ram: ', ns.formatNumber(ns.getPurchasedServerCost(MAX_RAM), 3));
 }

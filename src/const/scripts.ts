@@ -11,7 +11,7 @@ export const HWGW_MANAGER_NAME = '/managers/hwgw-manager.js';
 
 // COPY TO SERVER SCRIPTS
 export const MYSELF = '/const/files.js';
-export const BEGINNER_HACK_SCRIPT_NAME = '/beginner-hack.js';
+export const BEGINNER_HACK_SCRIPT_NAME = 'beginner-hack.js';
 export const SERVER_GROW_SCRIPT_NAME = '/mono/server-grow.js';
 export const SERVER_HACK_SCRIPT_NAME = '/mono/server-hack.js';
 export const SERVER_WEAKEN_SCRIPT_NAME = '/mono/server-weaken.js';
