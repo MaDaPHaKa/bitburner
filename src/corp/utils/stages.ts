@@ -41,11 +41,22 @@ export const CORP_AGRI_MAN_STAGE = new CorpSetupStage(new Stage('ManAgri', 1), [
   new Stage('ExpandWarehouse', 3),
   new Stage('BuyMaterials', 4),
   new Stage('WaitForEmployees', 5),
-  new Stage('2ndInvestor', 6),
+  new Stage('2ndInvestor&removeRnD', 6),
   new Stage('ExpandWarehouse2', 7),
   new Stage('BuyMaterials2', 8),
 ]);
 
-export const CORP_STAGES = [CORP_AGRI_SETUP_STAGE, CORP_AGRI_MAN_STAGE];
+export const CORP_TOB_SETUP_STAGE = new CorpSetupStage(new Stage('SetupTob', 2), [
+  new Stage('ExpandTobacchi', 0),
+  new Stage('EsxpandCities', 1),
+  new Stage('HireEmployees', 2),
+  new Stage('StartFirstProduction', 3),
+  new Stage('BuyUpgrades', 4),
+  new Stage('CompleteFirstProductionAndStartSecond', 5),
+  new Stage('WilsonAnalyticsAndAdvert', 6),
+]);
 
-// | new CorpSetupStage('ManageAgri') | new CorpSetupStage('SetupTobacchi') | new CorpSetupStage('Mantainance')
+export const CORP_TOB_MIDGAME_STAGE = new CorpSetupStage(new Stage('MidGameTob', 3), []);
+
+export const CORP_TOB_MANTAINANCE_STAGE = new CorpSetupStage(new Stage('MidGameTob', 4), [new Stage('Mantain', 0)]);
+export const CORP_STAGES = [CORP_AGRI_SETUP_STAGE, CORP_AGRI_MAN_STAGE, CORP_TOB_SETUP_STAGE, CORP_TOB_MIDGAME_STAGE];

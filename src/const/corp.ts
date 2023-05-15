@@ -1,6 +1,11 @@
 export const CORP_NAME = 'Totally Legit Corporation';
 export const AGRI_DIV_NAME = 'Veggies';
 export const TOB_DIV_NAME = 'Totally Not Ganja';
+export const TOB_PROD1_NAME = 'Not Ganja 1';
+export const TOB_PROD2_NAME = 'Not Ganja 2';
+export const TOB_PROD3_NAME = 'Not Ganja 3';
+export const TOB_PROD4_NAME = 'Not Ganja 4';
+export const TOB_PROD5_NAME = 'Not Ganja 5';
 
 export const enum JOBS {
   OPS = 'Operations',
@@ -15,6 +20,15 @@ export const enum MATERIALS {
   AIC = 'AI Cores',
   RES = 'Real Estate',
 }
+export enum UNLOCKS {
+  EXP = 'Export',
+  SSU = 'Smart Supply',
+  MDD = 'Market Research - Demand',
+  MDC = 'Market Data - Competition',
+  VEC = 'VeChain',
+  SAD = 'Shady Accounting',
+  GOV = 'Government Partnership',
+}
 export const enum UPGRADES {
   SFA = 'Smart Factories',
   SST = 'Smart Storage',
@@ -23,7 +37,9 @@ export const enum UPGRADES {
   SPI = 'Speech Processor Implants',
   NNI = 'Nuoptimal Nootropic Injector Implants',
   WAN = 'Wilson Analytics',
-  SSU = 'Smart Supply',
+  DSE = 'DreamSense',
+  PIN = 'Project Insight',
+  ABC = 'ABC SalesBots',
 }
 
 export const CORP_SETUP_UPGRADES = [UPGRADES.SFA, UPGRADES.FWI, UPGRADES.NAC, UPGRADES.NNI, UPGRADES.NAC];
@@ -48,3 +64,8 @@ export class AgriMaterialStage {
 }
 
 export const AGRI_MATERIAL = new AgriMaterials();
+
+export const ROUND_1_MIN_AMOUNT = 21e10; //210b
+export const ROUND_2_MIN_AMOUNT = 5e12; //5t
+export const ROUND_3_MIN_AMOUNT = 8e14; //800t
+export const ROUND_4_MIN_AMOUNT = 5e16; //500q

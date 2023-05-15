@@ -1,8 +1,8 @@
 import { CityName, Corporation, CorporationInfo, NS } from '@ns';
-import { AGRI_DIV_NAME, AGRI_MATERIAL, CORP_NAME, CORP_SETUP_UPGRADES, JOBS, UPGRADES } from 'const/corp';
-import { CORP_STARTUP } from 'const/scripts';
+import { AGRI_DIV_NAME, AGRI_MATERIAL, CORP_NAME, CORP_SETUP_UPGRADES, JOBS, UNLOCKS, UPGRADES } from 'const/corp';
+import { CORP_AGRI_SETUP, CORP_STARTUP } from 'const/scripts';
 import { checkAndUpdateStage, purchaseAgroMaterials, speedEmployeeStats } from 'corp/utils/functions';
-import { CorpSetupStage } from 'corp/utils/stages';
+import { CORP_AGRI_SETUP_STAGE, CorpSetupStage } from 'corp/utils/stages';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -13,43 +13,57 @@ export async function main(ns: NS) {
     if (!created) c.createCorporation(CORP_NAME, true);
   }
   const corp: CorporationInfo = c.getCorporation();
-  let currentStage: CorpSetupStage = checkAndUpdateStage(ns, c, corp);
-  let setupComplete = false;
-  if (currentStage === undefined) {
-    ns.print('ERROR undefined stage!');
-    ns.tail();
-  } else if (currentStage.mainStage.val !== 0) {
-    ns.print('WARN stage not agri prep, this script should not have started.');
-    ns.tail();
-  }
-  while (currentStage !== undefined && currentStage.mainStage.val === 0) {
-    ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
-    switch (currentStage.mainStage.val) {
-      case 0: {
-        setupAgri(c, currentStage);
-        break;
-      }
-      default: {
-        setupComplete = true;
-        break;
-      }
+  try {
+    let currentStage: CorpSetupStage = checkAndUpdateStage(ns, c, corp);
+    let setupComplete = false;
+    let error = false;
+    if (currentStage === undefined) {
+      error = true;
+      ns.print('ERROR undefined stage!');
+      ns.tail();
+    } else if (currentStage.mainStage.val !== 0) {
+      error = true;
+      ns.print('WARN stage not agri prep, this script should not have started.');
+      ns.tail();
     }
-    if (setupComplete) break;
-    currentStage = checkAndUpdateStage(ns, c, corp);
-    ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
-    await ns.sleep(500);
+    const expectedStageVal = CORP_AGRI_SETUP_STAGE.mainStage.val;
+    while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
+      ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
+      switch (currentStage.mainStage.val) {
+        case expectedStageVal: {
+          manageStage(c, currentStage);
+          break;
+        }
+        // this should not be needed.. better safe than sorry :D
+        default: {
+          setupComplete = true;
+          break;
+        }
+      }
+      if (setupComplete) break;
+      currentStage = checkAndUpdateStage(ns, c, corp, currentStage);
+      ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
+      await ns.sleep(500);
+    }
+    if (!error) {
+      ns.print('SUCCESS Agri startup complete, moving into mantainance.');
+      ns.tail();
+    }
+    ns.spawn(CORP_STARTUP, 1);
+  } catch (e) {
+    ns.print('ERROR ', e);
+    ns.tail();
   }
-  ns.spawn(CORP_STARTUP, 1);
 }
 
-function setupAgri(c: Corporation, currentStage: CorpSetupStage) {
+function manageStage(c: Corporation, currentStage: CorpSetupStage) {
   switch (currentStage.subStage.val) {
     case 0: {
       c.expandIndustry('Agriculture', AGRI_DIV_NAME);
       break;
     }
     case 1: {
-      c.unlockUpgrade(UPGRADES.SSU);
+      c.unlockUpgrade(UNLOCKS.SSU);
       break;
     }
     case 2: {

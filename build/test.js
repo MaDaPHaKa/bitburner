@@ -1,5 +1,6 @@
 // main();
-mainWGw();
+// mainWGw();
+tempTest();
 
 function main() {
   const tempoHack = 1000;
@@ -27,10 +28,10 @@ function main() {
     // console.log('sleep grow:', sleepGrow);
     // console.log('sleep weak grow:', sleepWeakGrow);
     // console.log('batch sleep: ', batchStartSleep);
-    console.log(i + " hack finisce: ", endHack);
-    console.log(i + " weak hack finisce: ", endWeakHack);
-    console.log(i + " grow finisce: ", endGrow);
-    console.log(i + " weak grow finisce: ", endWeakGrow);
+    console.log(i + ' hack finisce: ', endHack);
+    console.log(i + ' weak hack finisce: ', endWeakHack);
+    console.log(i + ' grow finisce: ', endGrow);
+    console.log(i + ' weak grow finisce: ', endWeakGrow);
   }
 }
 
@@ -52,8 +53,14 @@ function mainWGw() {
     // console.log('sleep grow:', sleepGrow);
     // console.log('sleep weak grow:', sleepWeakGrow);
     // console.log('batch sleep: ', batchStartSleep);
-    console.log(i + " weak standard finisce: ", endWeakHack);
-    console.log(i + " grow finisce: ", endGrow);
-    console.log(i + " weak grow finisce: ", endWeakGrow);
+    console.log(i + ' weak standard finisce: ', endWeakHack);
+    console.log(i + ' grow finisce: ', endGrow);
+    console.log(i + ' weak grow finisce: ', endWeakGrow);
   }
+}
+
+function tempTest() {
+  const str = 'MP*1';
+  console.log(str.slice(2));
+  console.log(str.slice(3));
 }
