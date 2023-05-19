@@ -25,17 +25,17 @@ export async function main(ns: NS) {
 
   let batches: Map<string, HwgwBatch> = new Map<string, HwgwBatch>();
   let preppin: string[] = [];
-  for (let port of HWGW_PORTS) {
+  for (const port of HWGW_PORTS) {
     ns.clearPort(port);
   }
-  for (let port of HWGW_PREP_PORTS) {
+  for (const port of HWGW_PREP_PORTS) {
     ns.clearPort(port);
   }
   while (true) {
     const serverManager: HwgwServerManager = new HwgwServerManager(ns);
     preppin = checkPreppinPort(ns, preppin);
     checkBatchingPorts(ns, batches);
-    let serverInfo: HwgwServerInfo[] = ((await loadTargetInfo(ns)) as ServerInfo[]).map(
+    const serverInfo: HwgwServerInfo[] = ((await loadTargetInfo(ns)) as ServerInfo[]).map(
       (el) => new HwgwServerInfo(ns, el)
     );
     checkAutoWeak(
@@ -68,7 +68,7 @@ export async function main(ns: NS) {
 
 function checkBatchingPorts(ns: NS, batches: Map<string, HwgwBatch>): void {
   if (batches.size <= 0) return;
-  for (let port of HWGW_PORTS) {
+  for (const port of HWGW_PORTS) {
     let portValue: string = ns.readPort(port) as string;
     while (portValue !== EMPTY_PORT_DATA) {
       const batch = batches.get(portValue);
@@ -82,7 +82,7 @@ function checkBatchingPorts(ns: NS, batches: Map<string, HwgwBatch>): void {
 
 function checkPreppinPort(ns: NS, preppin: string[]): string[] {
   if (preppin.length <= 0) return preppin;
-  for (let port of HWGW_PREP_PORTS) {
+  for (const port of HWGW_PREP_PORTS) {
     let portValue: string = ns.readPort(port) as string;
     while (portValue !== EMPTY_PORT_DATA) {
       preppin = preppin.filter((el) => el != portValue);
@@ -107,7 +107,7 @@ async function batch(
   serverManager: HwgwServerManager
 ): Promise<Map<string, HwgwBatch>> {
   let portSeed = 1;
-  for (let target of toBatch) {
+  for (const target of toBatch) {
     let batch: HwgwBatch | undefined = batches.get(target.name);
     if (batch == undefined || !batch.running) {
       const calc = new HwgOpsCalulator(ns, target);
@@ -138,7 +138,7 @@ function creaBatch(calc: HwgOpsCalulator) {
 
 async function prepServers(ns: NS, toPrep: HwgwServerInfo[], preppin: string[], serverMgr: HwgwServerManager) {
   let portSeed = 1;
-  for (let daPreparare of toPrep) {
+  for (const daPreparare of toPrep) {
     if (preppin.includes(daPreparare.name)) continue;
     serverMgr.aggiornaUtilizzo();
     if (!serverMgr.serverLiberi()) return;
@@ -169,7 +169,7 @@ async function prepServers(ns: NS, toPrep: HwgwServerInfo[], preppin: string[], 
 // ---------------------------------------------------------
 
 function checkAutoWeak(ns: NS, servers: string[]) {
-  for (let server of servers) {
+  for (const server of servers) {
     checkAndStartAutoWeak(ns, server);
   }
 }

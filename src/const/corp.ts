@@ -69,3 +69,7 @@ export const ROUND_1_MIN_AMOUNT = 21e10; //210b
 export const ROUND_2_MIN_AMOUNT = 5e12; //5t
 export const ROUND_3_MIN_AMOUNT = 8e14; //800t
 export const ROUND_4_MIN_AMOUNT = 5e16; //500q
+
+export const EMP_STAT_CHECK_VALUE = 97;
+export const EMP_STATS_CHECK_TIMEOUT = 60 * 5 * 1000;
+export const PARTY_BUDGET = 500000;

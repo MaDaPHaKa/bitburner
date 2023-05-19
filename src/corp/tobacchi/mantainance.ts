@@ -1,9 +1,9 @@
 import { Corporation, CorporationInfo, NS } from '@ns';
-import { TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
+import { CORP_NAME, TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
 import { manageProductSell } from 'corp/tobacchi/product-functions';
 import { checkAndUpdateStage, manageAevumEmployees, } from 'corp/utils/functions';
-import { CORP_TOB_MIDGAME_STAGE, CorpSetupStage } from 'corp/utils/stages';
+import { CORP_TOB_MANTAINANCE_STAGE, CorpSetupStage } from 'corp/utils/stages';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -29,10 +29,10 @@ async function runStage(c: Corporation, ns: NS) {
       ns.tail();
     } else if (currentStage.mainStage.val !== 2) {
       error = true;
-      ns.print('WARN stage not tobacchi midgame, this script should not have started.');
+      ns.print('WARN stage not tobacchi mantainance, this script should not have started.');
       ns.tail();
     }
-    const expectedStageVal = CORP_TOB_MIDGAME_STAGE.mainStage.val;
+    const expectedStageVal = CORP_TOB_MANTAINANCE_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
       ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);

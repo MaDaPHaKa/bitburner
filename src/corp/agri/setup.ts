@@ -1,6 +1,6 @@
-import { CityName, Corporation, CorporationInfo, NS } from '@ns';
-import { AGRI_DIV_NAME, AGRI_MATERIAL, CORP_NAME, CORP_SETUP_UPGRADES, JOBS, UNLOCKS, UPGRADES } from 'const/corp';
-import { CORP_AGRI_SETUP, CORP_STARTUP } from 'const/scripts';
+import { Corporation, CorporationInfo, NS } from '@ns';
+import { AGRI_DIV_NAME, AGRI_MATERIAL, CORP_NAME, CORP_SETUP_UPGRADES, JOBS, UNLOCKS } from 'const/corp';
+import { CORP_STARTUP } from 'const/scripts';
 import { checkAndUpdateStage, purchaseAgroMaterials, speedEmployeeStats } from 'corp/utils/functions';
 import { CORP_AGRI_SETUP_STAGE, CorpSetupStage } from 'corp/utils/stages';
 
@@ -28,10 +28,11 @@ export async function main(ns: NS) {
     }
     const expectedStageVal = CORP_AGRI_SETUP_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
+      ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
-          manageStage(c, currentStage);
+          manageStage(ns, c, currentStage);
           break;
         }
         // this should not be needed.. better safe than sorry :D
@@ -56,7 +57,7 @@ export async function main(ns: NS) {
   }
 }
 
-function manageStage(c: Corporation, currentStage: CorpSetupStage) {
+function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
   switch (currentStage.subStage.val) {
     case 0: {
       c.expandIndustry('Agriculture', AGRI_DIV_NAME);
@@ -67,13 +68,13 @@ function manageStage(c: Corporation, currentStage: CorpSetupStage) {
       break;
     }
     case 2: {
-      for (const city of Object.values(CityName)) {
+      for (const city of Object.values(ns.enums.CityName)) {
         if (!c.getDivision(AGRI_DIV_NAME).cities.includes(city)) {
           c.expandCity(AGRI_DIV_NAME, city);
           c.purchaseWarehouse(AGRI_DIV_NAME, city);
         }
         c.setSmartSupply(AGRI_DIV_NAME, city, true);
-        while (c.hireEmployee(AGRI_DIV_NAME, city)) {}
+        while (c.hireEmployee(AGRI_DIV_NAME, city)) { }
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.OPS, 1);
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.ENG, 1);
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.BUS, 1);
@@ -87,7 +88,7 @@ function manageStage(c: Corporation, currentStage: CorpSetupStage) {
       break;
     }
     case 4: {
-      for (const city of Object.values(CityName)) {
+      for (const city of Object.values(ns.enums.CityName)) {
         while (c.getWarehouse(AGRI_DIV_NAME, city).level < 2) {
           c.upgradeWarehouse(AGRI_DIV_NAME, city);
         }
@@ -103,11 +104,11 @@ function manageStage(c: Corporation, currentStage: CorpSetupStage) {
       break;
     }
     case 6: {
-      purchaseAgroMaterials(c, AGRI_MATERIAL.stage1);
+      purchaseAgroMaterials(ns, c, AGRI_MATERIAL.stage1);
       break;
     }
     case 7: {
-      speedEmployeeStats(c, currentStage);
+      speedEmployeeStats(ns, c, currentStage);
       break;
     }
   }

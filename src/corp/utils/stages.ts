@@ -23,7 +23,7 @@ export class Stage {
   }
 }
 
-export const CORP_AGRI_SETUP_STAGE = new CorpSetupStage(new Stage('SetupAgri', 0), [
+export const CORP_AGRI_SETUP_STAGE = new CorpSetupStage(new Stage('Agricolture Setup', 0), [
   new Stage('CreateDivision', 0),
   new Stage('BuySmartSupply', 1),
   new Stage('ExpandToCities', 2),
@@ -34,7 +34,7 @@ export const CORP_AGRI_SETUP_STAGE = new CorpSetupStage(new Stage('SetupAgri', 0
   new Stage('WaitForEmployees', 7),
 ]);
 
-export const CORP_AGRI_MAN_STAGE = new CorpSetupStage(new Stage('ManAgri', 1), [
+export const CORP_AGRI_MAN_STAGE = new CorpSetupStage(new Stage('Agricolture Mantainance', 1), [
   new Stage('1stInvestor', 0),
   new Stage('UpgradeEmployees', 1),
   new Stage('BuyUpgrades', 2),
@@ -46,7 +46,7 @@ export const CORP_AGRI_MAN_STAGE = new CorpSetupStage(new Stage('ManAgri', 1), [
   new Stage('BuyMaterials2', 8),
 ]);
 
-export const CORP_TOB_SETUP_STAGE = new CorpSetupStage(new Stage('SetupTob', 2), [
+export const CORP_TOB_SETUP_STAGE = new CorpSetupStage(new Stage('Tobacchi Setup', 2), [
   new Stage('ExpandTobacchi', 0),
   new Stage('EsxpandCities', 1),
   new Stage('HireEmployees', 2),
@@ -56,7 +56,7 @@ export const CORP_TOB_SETUP_STAGE = new CorpSetupStage(new Stage('SetupTob', 2),
   new Stage('WilsonAnalyticsAndAdvert', 6),
 ]);
 
-export const CORP_TOB_MIDGAME_STAGE = new CorpSetupStage(new Stage('MidGameTob', 3), []);
+export const CORP_TOB_MIDGAME_STAGE = new CorpSetupStage(new Stage('Tobacchi Midgame', 3), [new Stage('CompleteScondProductionAndStartThird', 0)]);
 
-export const CORP_TOB_MANTAINANCE_STAGE = new CorpSetupStage(new Stage('MidGameTob', 4), [new Stage('Mantain', 0)]);
-export const CORP_STAGES = [CORP_AGRI_SETUP_STAGE, CORP_AGRI_MAN_STAGE, CORP_TOB_SETUP_STAGE, CORP_TOB_MIDGAME_STAGE];
+export const CORP_TOB_MANTAINANCE_STAGE = new CorpSetupStage(new Stage('Tobacchi Mantainance', 4), [new Stage('Mantainance', 0)]);
+export const CORP_STAGES = [CORP_AGRI_SETUP_STAGE, CORP_AGRI_MAN_STAGE, CORP_TOB_SETUP_STAGE, CORP_TOB_MIDGAME_STAGE, CORP_TOB_MANTAINANCE_STAGE];
