@@ -36,55 +36,49 @@ async function runStage(c: Corporation, ns: NS) {
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
       ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
+      while (c.getCorporation().state != 'EXPORT') {
+        //when you make your main script, put things you want to be done
+        //potentially multiple times every cycle, like buying upgrades, here.
+        await ns.sleep(0);
+      }
+
+      while (c.getCorporation().state == 'EXPORT') {
+        //same as above
+        await ns.sleep(0);
+      }
+      //and to this part put things you want done exactly once per cycle
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
           await manageStage(ns, c);
           break;
         }
-        // this should not be needed.. better safe than sorry :D
+        // this should not be possible..
         default: {
           setupComplete = true;
           break;
         }
       }
-      if (setupComplete)
+      if (setupComplete) {
+        ns.print('ERROR Tobacchi mantaiance complete, should not be possible.');
+        ns.tail();
         break;
+      }
       currentStage = checkAndUpdateStage(ns, c, corp, currentStage);
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
-      await ns.sleep(500);
     }
     if (!error) {
-      ns.print('SUCCESS Tobacchi midgame complete, moving into mantainance.');
+      ns.print('ERROR Tobacchi mantaiance complete, should not be possible.');
       ns.tail();
     }
     ns.spawn(CORP_STARTUP, 1);
   } catch (e) {
     ns.print('ERROR ', e);
     ns.tail();
+    throw e;
   }
 }
 
 async function manageStage(ns: NS, c: Corporation) {
-  hireIntoAevum(ns, c);
-  const prod2 = c.getProduct(TOB_DIV_NAME, TOB_PROD2_NAME);
-  if (prod2.developmentProgress == 100) {
-    try {
-      const prod3 = c.getProduct(TOB_DIV_NAME, TOB_PROD3_NAME);
-      if (prod3.developmentProgress == 100) {
-        await manageProductSell(ns, c, prod3);
-      }
-    } catch (e) {
-      if (c.getCorporation().funds > 1e9 * 2)
-        c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, TOB_PROD3_NAME, 1e9, 1e9);
-    }
-    await manageProductSell(ns, c, prod2);
-  }
+  ns.print('temp, ', c);
 }
 
-function hireIntoAevum(ns: NS, c: Corporation) {
-  const toAdd = 60 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).employees;
-  if (toAdd > 0) {
-    c.upgradeOfficeSize(TOB_DIV_NAME, ns.enums.CityName.Aevum, toAdd);
-    manageAevumEmployees(ns, c, 60);
-  }
-}

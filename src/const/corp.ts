@@ -1,11 +1,11 @@
 export const CORP_NAME = 'Totally Legit Corporation';
 export const AGRI_DIV_NAME = 'Veggies';
 export const TOB_DIV_NAME = 'Totally Not Ganja';
-export const TOB_PROD1_NAME = 'Not Ganja 1';
-export const TOB_PROD2_NAME = 'Not Ganja 2';
-export const TOB_PROD3_NAME = 'Not Ganja 3';
-export const TOB_PROD4_NAME = 'Not Ganja 4';
-export const TOB_PROD5_NAME = 'Not Ganja 5';
+export const TOB_PROD1_NAME = 'Totally Not WhiteWidow';
+export const TOB_PROD2_NAME = 'Totally Not NY Diesel';
+export const TOB_PROD3_NAME = 'Totally Not Cheese';
+export const TOB_PROD4_NAME = 'Totally Not Lemon Haze';
+export const TOB_PROD5_NAME = 'Totally Not WhiteWidow';
 
 export const enum JOBS {
   OPS = 'Operations',
@@ -73,3 +73,26 @@ export const ROUND_4_MIN_AMOUNT = 5e16; //500q
 export const EMP_STAT_CHECK_VALUE = 97;
 export const EMP_STATS_CHECK_TIMEOUT = 60 * 5 * 1000;
 export const PARTY_BUDGET = 500000;
+
+export const TOBACCHI_LAB_POINT_THRESHOLD = 1e4;
+export const TOBACCHI_MK_POINT_THRESHOLD = 15e4;
+export const TOBACCHI_RES_MIN_THRESHOLD = 1e5;
+
+
+// setup\adjustment chec state 0=never sold, 1=first setup, 2=cyclic check and adjustment, 3=complete
+export const TOB_PROD_CHECK_START = 0;
+export const TOB_PROD_CHECK_FIRST = 1;
+export const TOB_PROD_CHECK_CYCLE = 2;
+export const TOB_PROD_CHECK_END = 3;
+
+export const TOB_PROD_ADJUST_START = 0;
+export const TOB_PROD_ADJUST_INC = 1;
+export const TOB_PROD_ADJUST_LOW = 2;
+export const TOB_PROD_ADJUST_END = 3;
+
+
+// prod setup state, 0=before bisection, 1=first bisection, 2=bisection loop, 3=complete
+export const TOB_PROD_SETUP_START = 0;
+export const TOB_PROD_SETUP_FIRST = 1;
+export const TOB_PROD_SETUP_LOOP = 2;
+export const TOB_PROD_SETUP_END = 3;
