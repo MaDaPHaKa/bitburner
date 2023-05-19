@@ -1,5 +1,5 @@
 import { Corporation, CorporationInfo, NS } from '@ns';
-import { CORP_NAME, TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
+import { TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
 import { manageProductSell } from 'corp/tobacchi/product-functions';
 import { checkAndUpdateStage, manageAevumEmployees, } from 'corp/utils/functions';
