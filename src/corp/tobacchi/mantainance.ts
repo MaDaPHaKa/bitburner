@@ -59,7 +59,7 @@ async function runStage(c: Corporation, ns: NS) {
         }
       }
       if (setupComplete) {
-        ns.print('ERROR Tobacchi mantaiance complete, should not be possible.');
+        ns.print('ERROR Tobacchi mantainance complete, should not be possible.');
         ns.tail();
         break;
       }
@@ -67,7 +67,7 @@ async function runStage(c: Corporation, ns: NS) {
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
     }
     if (!error) {
-      ns.print('ERROR Tobacchi mantaiance complete, should not be possible.');
+      ns.print('ERROR Tobacchi mantainance complete, should not be possible.');
       ns.tail();
     }
     ns.spawn(CORP_STARTUP, 1);
