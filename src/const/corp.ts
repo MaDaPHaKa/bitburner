@@ -10,11 +10,12 @@ export const TOB_PROD5_NAME = 'Totally Not Super Skunk';
 export const ROUND_1_MIN_AMOUNT = 21e10; //210b
 export const ROUND_2_MIN_AMOUNT = 5e12; //5t
 export const ROUND_3_MIN_AMOUNT = 8e14; //800t
-export const ROUND_4_MIN_AMOUNT = 5e16; //500q
+export const ROUND_4_MIN_AMOUNT = 5e17; //500q
 
 export const EMP_STAT_CHECK_VALUE = 97;
 export const EMP_STATS_CHECK_TIMEOUT = 30000;
 export const PARTY_BUDGET = 5e5;
+export const ADV_OR_HIRE_FUNDS_CHECK_MULTIPLIER = 0.5;
 
 export const TOBACCHI_MIN_INVESTMENT_VALUE = 1e9;
 

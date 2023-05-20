@@ -60,7 +60,10 @@ function mainWGw() {
 }
 
 function tempTest() {
-  const str = 'MP*1';
-  console.log(str.slice(2));
-  console.log(str.slice(3));
+  console.log(Math.pow(10, Math.floor(Math.log10(125)) - 1));
+  console.log(Math.pow(10, Math.floor(Math.log10(165)) - 1));
+  console.log(Math.pow(10, Math.floor(Math.log10(25)) - 1));
+  console.log(Math.pow(10, Math.floor(Math.log10(65)) - 1));
+  console.log(Math.pow(10, Math.floor(Math.log10(1254) - 1)));
+  console.log(Math.pow(10, Math.floor(Math.log10(1654) - 1)));
 }
