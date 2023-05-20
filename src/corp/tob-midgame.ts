@@ -1,13 +1,20 @@
 import { Corporation, NS } from '@ns';
-import { TOBACCHI_MIN_INVESTMENT_VALUE, TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
+import {
+  TOBACCHI_MIN_INVESTMENT_VALUE,
+  TOB_DIV_NAME,
+  TOB_PROD1_NAME,
+  TOB_PROD2_NAME,
+  TOB_PROD3_NAME,
+} from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
-import { checkAndUpdateStage, manageAevumEmployees } from 'corp/corp-functions';
+import { checkAndSpeedEmpStats, checkAndUpdateStage, manageAevumEmployees } from 'corp/corp-functions';
 import { CORP_TOB_MIDGAME_STAGE, CorpSetupStage } from 'corp/corp-stages';
 import { manageProductSell } from 'corp/product-functions';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
+  ns.tail();
   const c: Corporation = ns.corporation;
   if (!c.hasCorporation()) {
     ns.print('ERROR no corporation, this script should not have started!');
@@ -26,18 +33,17 @@ async function runStage(c: Corporation, ns: NS) {
       error = true;
       ns.print('ERROR undefined stage!');
       ns.tail();
-    } else if (currentStage.mainStage.val !== 2) {
+    } else if (currentStage.mainStage.val !== CORP_TOB_MIDGAME_STAGE.mainStage.val) {
       error = true;
       ns.print('WARN stage not tobacchi midgame, this script should not have started.');
       ns.tail();
     }
     const expectedStageVal = CORP_TOB_MIDGAME_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
-      ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
-          await manageStage(ns, c);
+          await manageStage(ns, c, currentStage);
           break;
         }
         // this should not be needed.. better safe than sorry :D
@@ -49,7 +55,6 @@ async function runStage(c: Corporation, ns: NS) {
       if (setupComplete) break;
       currentStage = checkAndUpdateStage(ns, currentStage);
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
-      await ns.sleep(500);
     }
     if (!error) {
       ns.print('SUCCESS Tobacchi midgame complete, moving into mantainance.');
@@ -62,7 +67,7 @@ async function runStage(c: Corporation, ns: NS) {
   }
 }
 
-async function manageStage(ns: NS, c: Corporation) {
+async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
   hireIntoAevum(ns, c);
   const prod2 = c.getProduct(TOB_DIV_NAME, TOB_PROD2_NAME);
   if (prod2.developmentProgress >= 100) {
@@ -82,13 +87,16 @@ async function manageStage(ns: NS, c: Corporation) {
         );
     }
     await manageProductSell(ns, c, prod2);
+  } else {
+    await checkAndSpeedEmpStats(ns, currentStage);
+    await manageProductSell(ns, c, c.getProduct(TOB_DIV_NAME, TOB_PROD1_NAME));
   }
 }
 
 function hireIntoAevum(ns: NS, c: Corporation) {
-  const toAdd = 60 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).employees;
+  const toAdd = 60 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).size;
   if (toAdd > 0) {
     c.upgradeOfficeSize(TOB_DIV_NAME, ns.enums.CityName.Aevum, toAdd);
-    manageAevumEmployees(ns, 60);
+    manageAevumEmployees(ns);
   }
 }

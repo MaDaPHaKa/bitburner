@@ -127,16 +127,20 @@ async function checkAndAdjustProdRate(ns: NS, c: Corporation, p: Product): Promi
     const x = Number.parseInt((p.sCost as string).slice(3));
     const prod: number = p.cityData.Aevum[1];
     const sell: number = p.cityData.Aevum[2];
-    const rate = prod - sell;
-    if (rate < 0 && rate > -0.3) {
+    const rate = Math.round((prod - sell + Number.EPSILON) * 10000) / 10000;
+    if (rate < 0 && rate >= -0.5) {
       // rate is ok, no need to adjust
+      state = TOB_PROD_ADJUST_END;
       break;
     }
     //and to this part put things you want done exactly once per cycle
     previousState = state;
-    if (rate > 0) state = TOB_PROD_ADJUST_LOW;
-    else if (previousState !== TOB_PROD_ADJUST_LOW) state = TOB_PROD_ADJUST_INC;
-    else state = TOB_PROD_ADJUST_END;
+    if (state === TOB_PROD_ADJUST_START) state = TOB_PROD_ADJUST_INC;
+    else {
+      if (rate > 0) state = x > 1 ? TOB_PROD_ADJUST_LOW : TOB_PROD_ADJUST_END;
+      else if (previousState !== TOB_PROD_ADJUST_LOW) state = TOB_PROD_ADJUST_INC;
+      else state = TOB_PROD_ADJUST_END;
+    }
     switch (state) {
       case TOB_PROD_ADJUST_START: {
         break;

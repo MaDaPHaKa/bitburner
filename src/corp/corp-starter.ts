@@ -17,6 +17,8 @@ import { CorpSetupStage } from 'corp/corp-stages';
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
+  ns.enableLog('spawn');
+  ns.tail();
   const c = ns.corporation;
   if (!c.hasCorporation()) {
     ns.spawn(CORP_AGRI_SETUP, 1);

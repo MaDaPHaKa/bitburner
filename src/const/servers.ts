@@ -1,7 +1,10 @@
 // SERVER CONSTANTS
 export const SERVER_NAME_PREFIX = 'srv-';
 export const XP_FARMER_SERVER_PREFIX = 'farmer-srv-';
-export const HOME_FREE_RAM_TO_KEEP = 40;
+// free ram pre corp
+// export const HOME_FREE_RAM_TO_KEEP = 40;
+// free ram for corp script
+export const HOME_FREE_RAM_TO_KEEP = 1024;
 export const MIN_HOME_RAM_TO_RUN_HWGW = 1024;
 // MAX_RAM_STANDARD 1048576
 // MAX_RAM_CURRENT_BN 524288

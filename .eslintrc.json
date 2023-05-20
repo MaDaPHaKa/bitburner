@@ -24,5 +24,7 @@
         "NetscriptDefinitions.d.ts"
     ],
     "rules": {
+        "no-empty":"warn",
+        "no-constant-condition":"warn"
     }
 }

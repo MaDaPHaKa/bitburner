@@ -10,13 +10,14 @@ import {
   UPGRADES,
 } from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
-import { checkAndUpdateStage, manageAevumEmployees, manageInvestors } from 'corp/corp-functions';
+import { checkAndUpdateStage, manageAevumEmployees, manageInvestors, speedEmployeeStats } from 'corp/corp-functions';
 import { CORP_TOB_MANTAINANCE_STAGE, CorpSetupStage } from 'corp/corp-stages';
 import { manageProductSell, prodNotSelling as prodNotSetup } from 'corp/product-functions';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
+  ns.tail();
   const c: Corporation = ns.corporation;
   if (!c.hasCorporation()) {
     ns.print('ERROR no corporation, this script should not have started!');
@@ -35,19 +36,28 @@ async function runStage(c: Corporation, ns: NS) {
       error = true;
       ns.print('ERROR undefined stage!');
       ns.tail();
-    } else if (currentStage.mainStage.val !== 2) {
+    } else if (currentStage.mainStage.val !== CORP_TOB_MANTAINANCE_STAGE.mainStage.val) {
       error = true;
       ns.print('WARN stage not tobacchi mantainance, this script should not have started.');
       ns.tail();
     }
     const expectedStageVal = CORP_TOB_MANTAINANCE_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
-      ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
+      while (c.getCorporation().state !== 'EXPORT') {
+        //when you make your main script, put things you want to be done
+        //potentially multiple times every cycle, like buying upgrades, here.
+        await ns.sleep(0);
+      }
+
+      while (c.getCorporation().state === 'EXPORT') {
+        //same as above
+        await ns.sleep(0);
+      }
       //and to this part put things you want done exactly once per cycle
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
-          await manageStage(ns, c);
+          await manageStage(ns, c, currentStage);
           break;
         }
         // this should not be possible..
@@ -76,25 +86,15 @@ async function runStage(c: Corporation, ns: NS) {
   }
 }
 
-async function manageStage(ns: NS, c: Corporation) {
-  ns.print('temp, ', c);
-  while (c.getCorporation().state !== 'EXPORT') {
-    //when you make your main script, put things you want to be done
-    //potentially multiple times every cycle, like buying upgrades, here.
-    await ns.sleep(0);
-  }
-
-  while (c.getCorporation().state === 'EXPORT') {
-    //same as above
-    await ns.sleep(0);
-  }
+async function manageStage(ns: NS, c: Corporation, stage: CorpSetupStage) {
   manageMoney(ns, c);
   checkReasearch(ns, c);
   checkWilson(c);
   adsOrEmployees(ns, c);
   upgradeOtherCities(ns, c);
+  await speedEmployeeStats(ns, stage);
   if (hasNoConfiguredProducts(c)) {
-    checkProducts(ns, c);
+    await checkProducts(ns, c);
   } else {
     startDevelop(ns, c);
   }
@@ -103,8 +103,9 @@ async function manageStage(ns: NS, c: Corporation) {
 function manageMoney(ns: NS, c: Corporation) {
   if (!c.getCorporation().public) {
     try {
+      const round = c.getInvestmentOffer().round;
       manageInvestors(ns, ROUND_3_MIN_AMOUNT, 3);
-      if (manageInvestors(ns, ROUND_4_MIN_AMOUNT, 4)) {
+      if (round === 4 && manageInvestors(ns, ROUND_4_MIN_AMOUNT, 4)) {
         ns.print('SUCCESS Time to go public');
         ns.tail();
       }
@@ -144,7 +145,7 @@ function startDevelop(ns: NS, c: Corporation) {
   for (const product of products) {
     prods.push(c.getProduct(TOB_DIV_NAME, product));
   }
-  const prodToUpdate = prods.sort((a, b) => b.rat - a.rat)[0];
+  const prodToUpdate = prods.sort((a, b) => a.rat - b.rat)[0];
   const prodName = prodToUpdate.name;
   c.discontinueProduct(TOB_DIV_NAME, prodName);
   const investment = Math.floor(c.getCorporation().funds / 3);
@@ -172,11 +173,10 @@ async function checkProducts(ns: NS, c: Corporation) {
         all.push(prod);
       }
     }
-    await Promise.all(
-      all.map(async (el) => {
-        manageProductSell(ns, c, el);
-      })
-    );
+    for (const product of all) {
+      ns.print('INFO cycle check ', product.name);
+      await manageProductSell(ns, c, product);
+    }
   }
 }
 
@@ -194,7 +194,7 @@ function adsOrEmployees(ns: NS, c: Corporation) {
   } else {
     if (funds > employeeCost && employeeCost < funds / 3) {
       c.upgradeOfficeSize(TOB_DIV_NAME, ns.enums.CityName.Aevum, 15);
-      manageAevumEmployees(ns, aevumSize + 15);
+      manageAevumEmployees(ns);
     }
   }
 }

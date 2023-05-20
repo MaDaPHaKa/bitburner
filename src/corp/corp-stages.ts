@@ -40,8 +40,8 @@ export const CORP_AGRI_MAN_STAGE = new CorpSetupStage(new Stage('Agricolture Man
   new Stage('BuyUpgrades', 2),
   new Stage('ExpandWarehouse', 3),
   new Stage('BuyMaterials', 4),
-  new Stage('WaitForEmployees', 5),
-  new Stage('2ndInvestor&removeRnD', 6),
+  new Stage('WaitAndRemoveR&D', 5),
+  new Stage('2ndInvestor&waitEmployees', 6),
   new Stage('ExpandWarehouse2', 7),
   new Stage('BuyMaterials2', 8),
 ]);
@@ -56,7 +56,17 @@ export const CORP_TOB_SETUP_STAGE = new CorpSetupStage(new Stage('Tobacchi Setup
   new Stage('WilsonAnalyticsAndAdvert', 6),
 ]);
 
-export const CORP_TOB_MIDGAME_STAGE = new CorpSetupStage(new Stage('Tobacchi Midgame', 3), [new Stage('CompleteScondProductionAndStartThird', 0)]);
+export const CORP_TOB_MIDGAME_STAGE = new CorpSetupStage(new Stage('Tobacchi Midgame', 3), [
+  new Stage('CompleteScondProductionAndStartThird', 0),
+]);
 
-export const CORP_TOB_MANTAINANCE_STAGE = new CorpSetupStage(new Stage('Tobacchi Mantainance', 4), [new Stage('Mantainance', 0)]);
-export const CORP_STAGES = [CORP_AGRI_SETUP_STAGE, CORP_AGRI_MAN_STAGE, CORP_TOB_SETUP_STAGE, CORP_TOB_MIDGAME_STAGE, CORP_TOB_MANTAINANCE_STAGE];
+export const CORP_TOB_MANTAINANCE_STAGE = new CorpSetupStage(new Stage('Tobacchi Mantainance', 4), [
+  new Stage('Mantainance', 0),
+]);
+export const CORP_STAGES = [
+  CORP_AGRI_SETUP_STAGE,
+  CORP_AGRI_MAN_STAGE,
+  CORP_TOB_SETUP_STAGE,
+  CORP_TOB_MIDGAME_STAGE,
+  CORP_TOB_MANTAINANCE_STAGE,
+];

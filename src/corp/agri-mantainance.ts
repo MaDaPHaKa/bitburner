@@ -7,6 +7,7 @@ import { CORP_AGRI_MAN_STAGE, CorpSetupStage } from 'corp/corp-stages';
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
+  ns.enableLog('spawn');
   ns.tail();
   const c = ns.corporation;
   if (!c.hasCorporation()) {
@@ -26,14 +27,13 @@ async function runStage(ns: NS) {
       error = true;
       ns.print('ERROR undefined stage!');
       ns.tail();
-    } else if (currentStage.mainStage.val !== 0) {
+    } else if (currentStage.mainStage.val !== CORP_AGRI_MAN_STAGE.mainStage.val) {
       error = true;
       ns.print('WARN stage not agri prep, this script should not have started.');
       ns.tail();
     }
     const expectedStageVal = CORP_AGRI_MAN_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
-      ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
@@ -95,7 +95,7 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
     }
     case 3: {
       for (const city of Object.values(ns.enums.CityName)) {
-        while (c.getWarehouse(AGRI_DIV_NAME, city).level < 9) {
+        while (c.getWarehouse(AGRI_DIV_NAME, city).size < 2000) {
           c.upgradeWarehouse(AGRI_DIV_NAME, city);
         }
       }
@@ -106,10 +106,7 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
       break;
     }
     case 5: {
-      speedEmployeeStats(ns, currentStage);
-      break;
-    }
-    case 6: {
+      await ns.sleep(60 * 2 * 1000);
       for (const city of Object.values(ns.enums.CityName)) {
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.RND, 0);
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.OPS, 3);
@@ -117,13 +114,18 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.BUS, 2);
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.MAN, 2);
       }
-      manageInvestors(ns, ROUND_2_MIN_AMOUNT, 1);
+      break;
+    }
+    case 6: {
+      if (c.getCorporation().funds > 1e9) await speedEmployeeStats(ns, currentStage);
+      const invested = manageInvestors(ns, ROUND_2_MIN_AMOUNT, 2);
+      if (invested) await speedEmployeeStats(ns, currentStage);
       break;
     }
 
     case 7: {
       for (const city of Object.values(ns.enums.CityName)) {
-        while (c.getWarehouse(AGRI_DIV_NAME, city).level < 18) {
+        while (c.getWarehouse(AGRI_DIV_NAME, city).size < 3800) {
           c.upgradeWarehouse(AGRI_DIV_NAME, city);
         }
       }

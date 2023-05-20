@@ -13,7 +13,7 @@ export const ROUND_3_MIN_AMOUNT = 8e14; //800t
 export const ROUND_4_MIN_AMOUNT = 5e16; //500q
 
 export const EMP_STAT_CHECK_VALUE = 97;
-export const EMP_STATS_CHECK_TIMEOUT = 3e5;
+export const EMP_STATS_CHECK_TIMEOUT = 30000;
 export const PARTY_BUDGET = 5e5;
 
 export const TOBACCHI_MIN_INVESTMENT_VALUE = 1e9;
@@ -102,8 +102,8 @@ export const CORP_SETUP_UPGRADES = [UPGRADES.SFA, UPGRADES.FWI, UPGRADES.NAC, UP
 
 export class AgriMaterials {
   stage1: AgriMaterialStage = new AgriMaterialStage(125, 0, 75, 27000);
-  stage2: AgriMaterialStage = new AgriMaterialStage(2675, 96, 2445, 119400);
-  stage3: AgriMaterialStage = new AgriMaterialStage(6500, 630, 3750, 84000);
+  stage2: AgriMaterialStage = new AgriMaterialStage(2800, 96, 2520, 146400);
+  stage3: AgriMaterialStage = new AgriMaterialStage(9300, 726, 6270, 230400);
 }
 
 export class AgriMaterialStage {

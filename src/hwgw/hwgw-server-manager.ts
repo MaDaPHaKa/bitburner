@@ -22,7 +22,7 @@ export class HwgwServerManager {
       .filter((el) => el !== 'home' && !el.startsWith(XP_FARMER_SERVER_PREFIX));
     this.homeServer = new ServerData(ns, 'home');
     this.homeServer.aggiornaServer();
-    for (let server of serverNames) {
+    for (const server of serverNames) {
       if (server === 'home') continue;
       const serverData = new ServerData(ns, server);
       serverData.aggiornaServer();
@@ -45,7 +45,7 @@ export class HwgwServerManager {
       serverBatches.push(serverBatch);
       iteration++;
     }
-    for (let server of this.servers) {
+    for (const server of this.servers) {
       serverBatch = batch.creaServerBatch(this.ns, server, target, calc, iteration);
       if (serverBatch.canRun) {
         serverBatches.push(serverBatch);
@@ -100,7 +100,7 @@ export class HwgwServerManager {
   canRun(ramNecessaria: number): boolean {
     this.aggiornaUtilizzo();
     let ramDisponibile = this.homeServer.freeRam;
-    for (let server of this.servers) {
+    for (const server of this.servers) {
       ramDisponibile += server.freeRam;
     }
     return ramDisponibile > ramNecessaria;
@@ -118,9 +118,9 @@ export class HwgwServerManager {
     const growArgs = [JSON.stringify(growProp)];
     const growWeakArgs = [JSON.stringify(growWeakProp)];
     this.aggiornaUtilizzo();
-    let weakThreads = batch.weakThreads;
-    let growThreads = batch.growThreads;
-    let growWeakThreads = batch.growWeakThreads;
+    const weakThreads = batch.weakThreads;
+    const growThreads = batch.growThreads;
+    const growWeakThreads = batch.growWeakThreads;
     this.avviaWgwScript(HWGW_SERVER_WEAKEN_SCRIPT, weakThreads, WG_COST, ...weakArgs);
     this.avviaWgwScript(HWGW_SERVER_GROW_SCRIPT, growThreads, WG_COST, ...growArgs);
     this.avviaWgwScript(HWGW_SERVER_WEAKEN_SCRIPT, growWeakThreads, WG_COST, ...growWeakArgs);
@@ -136,7 +136,7 @@ export class HwgwServerManager {
       return;
     }
     this.aggiornaUtilizzo();
-    let allServers = this.servers.slice(0);
+    const allServers = this.servers.slice(0);
     allServers.unshift(this.homeServer);
     let availableServers = allServers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread * threadNeeded);
     if (availableServers.length > 0) {
@@ -144,9 +144,9 @@ export class HwgwServerManager {
       return;
     }
     availableServers = allServers.filter((el) => el.freeRam > 0 && el.freeRam > ramPerThread);
-    for (let server of allServers) {
+    for (const server of allServers) {
       const freeThreads = server.freeRam / ramPerThread;
-      let threadToLaunch = Math.floor(freeThreads > threadNeeded ? threadNeeded : freeThreads);
+      const threadToLaunch = Math.floor(freeThreads > threadNeeded ? threadNeeded : freeThreads);
       if (threadToLaunch <= 1) break;
       this.ns.exec(scriptName, server.name, threadToLaunch, ...args);
       server.aggiornaServer();

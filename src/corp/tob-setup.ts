@@ -34,15 +34,25 @@ async function runStage(c: Corporation, ns: NS) {
       error = true;
       ns.print('ERROR undefined stage!');
       ns.tail();
-    } else if (currentStage.mainStage.val !== 2) {
+    } else if (currentStage.mainStage.val !== CORP_TOB_SETUP_STAGE.mainStage.val) {
       error = true;
       ns.print('WARN stage not tobacchi prep, this script should not have started.');
       ns.tail();
     }
     const expectedStageVal = CORP_TOB_SETUP_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
-      ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
+      while (c.getCorporation().state !== 'EXPORT') {
+        //when you make your main script, put things you want to be done
+        //potentially multiple times every cycle, like buying upgrades, here.
+        await ns.sleep(0);
+      }
+
+      while (c.getCorporation().state === 'EXPORT') {
+        //same as above
+        await ns.sleep(0);
+      }
+      //and to this part put things you want done exactly once per cycle
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
           await manageStage(ns, c, currentStage);
@@ -57,7 +67,6 @@ async function runStage(c: Corporation, ns: NS) {
       if (setupComplete) break;
       currentStage = checkAndUpdateStage(ns, currentStage);
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
-      await ns.sleep(500);
     }
     if (!error) {
       ns.print('SUCCESS Tobacchi startup complete, moving into midgame.');
@@ -100,7 +109,7 @@ async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage)
         TOBACCHI_MIN_INVESTMENT_VALUE,
         TOBACCHI_MIN_INVESTMENT_VALUE
       );
-      checkAndSpeedEmpStats(ns, currentStage);
+      await checkAndSpeedEmpStats(ns, currentStage);
       break;
     }
     case 4: {
@@ -133,6 +142,8 @@ async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage)
             );
         }
         await manageProductSell(ns, c, prod1);
+      } else {
+        await checkAndSpeedEmpStats(ns, currentStage);
       }
       break;
     }
@@ -140,16 +151,20 @@ async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage)
       while (c.getUpgradeLevel(UPGRADES.WAN) < 10) {
         c.levelUpgrade(UPGRADES.WAN);
       }
-      while (c.getCorporation().funds > 4e9) {
+      let funds = c.getCorporation().funds;
+      while (funds > 4e9 && c.getHireAdVertCost(TOB_DIV_NAME) < funds) {
         c.hireAdVert(TOB_DIV_NAME);
+        await ns.sleep(50);
+        funds = c.getCorporation().funds;
       }
+      await manageProductSell(ns, c, c.getProduct(TOB_DIV_NAME, TOB_PROD1_NAME));
       break;
     }
   }
 }
 
 function hireIntoAevum(ns: NS, c: Corporation) {
-  const toAdd = 30 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).employees;
+  const toAdd = 30 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).size;
   if (toAdd > 0) c.upgradeOfficeSize(TOB_DIV_NAME, ns.enums.CityName.Aevum, toAdd);
   while (c.hireEmployee(TOB_DIV_NAME, ns.enums.CityName.Aevum)) {}
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.OPS, 8);
@@ -160,7 +175,7 @@ function hireIntoAevum(ns: NS, c: Corporation) {
 
 function hireIntoOthers(ns: NS, c: Corporation) {
   for (const city of Object.values(ns.enums.CityName).filter((el) => el !== ns.enums.CityName.Aevum)) {
-    const toAdd = 9 - c.getOffice(TOB_DIV_NAME, city).employees;
+    const toAdd = 9 - c.getOffice(TOB_DIV_NAME, city).size;
     if (toAdd > 0) c.upgradeOfficeSize(TOB_DIV_NAME, city, toAdd);
     while (c.hireEmployee(TOB_DIV_NAME, city)) {}
     c.setAutoJobAssignment(TOB_DIV_NAME, city, JOBS.BUS, 1);

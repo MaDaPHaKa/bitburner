@@ -7,6 +7,7 @@ import { CORP_AGRI_SETUP_STAGE, CorpSetupStage } from 'corp/corp-stages';
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
+  ns.enableLog('spawn');
   ns.tail();
   const c = ns.corporation;
   if (!c.hasCorporation()) {
@@ -24,14 +25,13 @@ export async function main(ns: NS) {
       error = true;
       ns.print('ERROR undefined stage!');
       ns.tail();
-    } else if (currentStage.mainStage.val !== 0) {
+    } else if (currentStage.mainStage.val !== CORP_AGRI_SETUP_STAGE.mainStage.val) {
       error = true;
       ns.print('WARN stage not agri prep, this script should not have started.');
       ns.tail();
     }
     const expectedStageVal = CORP_AGRI_SETUP_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
-      ns.clearLog();
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
@@ -94,7 +94,7 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
     }
     case 4: {
       for (const city of Object.values(ns.enums.CityName)) {
-        while (c.getWarehouse(AGRI_DIV_NAME, city).level < 3) {
+        while (c.getWarehouse(AGRI_DIV_NAME, city).size < 300) {
           c.upgradeWarehouse(AGRI_DIV_NAME, city);
         }
       }
@@ -113,7 +113,7 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
       break;
     }
     case 7: {
-      speedEmployeeStats(ns, currentStage);
+      await speedEmployeeStats(ns, currentStage);
       break;
     }
   }

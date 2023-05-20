@@ -23,6 +23,7 @@ import {
   CORP_TOB_SETUP_STAGE,
   CorpSetupStage,
 } from 'corp/corp-stages';
+import { CORP_AGRI_MANTAINANCE } from '/const/scripts';
 
 export function checkAndUpdateStage(ns: NS, currentStage: CorpSetupStage | undefined = undefined): CorpSetupStage {
   const lastEmpCheck = currentStage ? currentStage.lastEmpStatsCheck : -1;
@@ -57,10 +58,10 @@ export function checkUpgrades(ns: NS, level: number, upgrades = CORP_SETUP_UPGRA
   return true;
 }
 
-export function checkAgroWarehouse(ns: NS, level: number): boolean {
+export function checkAgroWarehouse(ns: NS, size: number): boolean {
   const c = ns.corporation;
   for (const city of Object.values(ns.enums.CityName)) {
-    if (c.getWarehouse(AGRI_DIV_NAME, city).level < level) {
+    if (c.getWarehouse(AGRI_DIV_NAME, city).size < size) {
       return false;
     }
   }
@@ -91,7 +92,7 @@ export function checkAgroEmployees(ns: NS, moveToRnD = false): boolean {
   for (const city of Object.values(ns.enums.CityName)) {
     const office = c.getOffice(AGRI_DIV_NAME, city);
     if (office.size < 9) return false;
-    else if (office.employeeJobs['Research & Development'] > 0 && moveToRnD) return false;
+    else if (moveToRnD && office.employeeJobs['Research & Development'] > 0) return false;
   }
   return true;
 }
@@ -106,25 +107,31 @@ export function checkTobEmployees(ns: NS, devCityEmp: number): boolean {
   return true;
 }
 
-export function checkEmployeeStats(ns: NS): boolean {
+export function checkAgriEmpNumSetup(ns: NS): boolean {
+  const cities = Object.values(ns.enums.CityName);
+  const c = ns.corporation;
+  let emps = 0;
+  for (const city of cities) {
+    emps += c.getOffice(AGRI_DIV_NAME, city).employees;
+  }
+  return emps / cities.length === 3;
+}
+
+export function checkEmployeeStats(ns: NS, divisionName: string): boolean {
   const c = ns.corporation;
   let avgMor = 0;
   let avgHap = 0;
   let avgEne = 0;
-  for (const city of Object.values(ns.enums.CityName)) {
-    avgMor += c.getOffice(AGRI_DIV_NAME, city).avgMor;
-    avgHap += c.getOffice(AGRI_DIV_NAME, city).avgHap;
-    avgEne += c.getOffice(AGRI_DIV_NAME, city).avgEne;
+  const cities = Object.values(ns.enums.CityName);
+  for (const city of cities) {
+    avgMor += c.getOffice(divisionName, city).avgMor;
+    avgHap += c.getOffice(divisionName, city).avgHap;
+    avgEne += c.getOffice(divisionName, city).avgEne;
   }
-  avgMor /= 6;
-  avgHap /= 6;
-  avgEne /= 6;
-  ns.clearLog();
-  ns.print('waiting for employee stats to rise');
-  ns.print('   avg morale: ' + avgMor.toFixed(3) + '/97');
-  ns.print('avg happiness: ' + avgHap.toFixed(3) + '/97');
-  ns.print('   avg energy: ' + avgEne.toFixed(3) + '/97');
-  if (avgMor >= EMP_STAT_CHECK_VALUE && avgHap / 6 >= EMP_STAT_CHECK_VALUE && avgEne >= EMP_STAT_CHECK_VALUE) {
+  avgMor /= cities.length;
+  avgHap /= cities.length;
+  avgEne /= cities.length;
+  if (avgMor >= EMP_STAT_CHECK_VALUE && avgHap >= EMP_STAT_CHECK_VALUE && avgEne >= EMP_STAT_CHECK_VALUE) {
     return true;
   }
   return false;
@@ -139,10 +146,13 @@ export function checkProductAtLeastDevelopment(ns: NS, division: string, name: s
     return false;
   }
 }
-export function checkAndSpeedEmpStats(ns: NS, stage: CorpSetupStage) {
-  const c = ns.corporation;
-  if (Date.now() - stage.lastEmpStatsCheck > 60 * 5 * 1000 && !checkEmployeeStats(ns)) {
-    speedEmployeeStats(ns, stage);
+export async function checkAndSpeedEmpStats(ns: NS, stage: CorpSetupStage) {
+  const division = stage.mainStage.val <= CORP_AGRI_MAN_STAGE.mainStage.val ? AGRI_DIV_NAME : TOB_DIV_NAME;
+  if (
+    (stage.lastEmpStatsCheck === -1 || Date.now() - stage.lastEmpStatsCheck > EMP_STATS_CHECK_TIMEOUT) &&
+    !checkEmployeeStats(ns, division)
+  ) {
+    await speedEmployeeStats(ns, stage);
   }
 }
 export function setSubstage(stage: CorpSetupStage, substageIndex: number): CorpSetupStage {
@@ -198,34 +208,60 @@ export async function purchaseAgroMaterials(ns: NS, stage: AgriMaterialStage) {
   }
 }
 
-export function speedEmployeeStats(ns: NS, stage: CorpSetupStage) {
+export async function speedEmployeeStats(ns: NS, stage: CorpSetupStage) {
+  const division = stage.mainStage.val <= CORP_AGRI_MAN_STAGE.mainStage.val ? AGRI_DIV_NAME : TOB_DIV_NAME;
+  let empStatOk = checkEmployeeStats(ns, division);
   const c = ns.corporation;
-  if (stage.lastEmpStatsCheck === -1) {
-    stage.lastEmpStatsCheck = Date.now();
-  } else if (Date.now() - stage.lastEmpStatsCheck > EMP_STATS_CHECK_TIMEOUT) {
-    for (const city of Object.values(ns.enums.CityName)) {
-      c.buyCoffee(AGRI_DIV_NAME, city);
-      c.throwParty(AGRI_DIV_NAME, city, PARTY_BUDGET);
+  while (!empStatOk) {
+    while (c.getCorporation().state !== 'EXPORT') {
+      //when you make your main script, put things you want to be done
+      //potentially multiple times every cycle, like buying upgrades, here.
+      await ns.sleep(0);
     }
-    stage.lastEmpStatsCheck = -1;
+
+    while (c.getCorporation().state === 'EXPORT') {
+      //same as above
+      await ns.sleep(0);
+    }
+    if (stage.lastEmpStatsCheck === -1) {
+      stage.lastEmpStatsCheck = Date.now();
+    } else if (Date.now() - stage.lastEmpStatsCheck > EMP_STATS_CHECK_TIMEOUT) {
+      ns.print('INFO More than ' + EMP_STATS_CHECK_TIMEOUT / 1000 + 's since last stat push, coffee&party time.');
+      for (const city of Object.values(ns.enums.CityName)) {
+        if (
+          c.getOffice(division, city).avgMor < EMP_STAT_CHECK_VALUE ||
+          c.getOffice(division, city).avgHap < EMP_STAT_CHECK_VALUE
+        ) {
+          c.throwParty(division, city, PARTY_BUDGET);
+        }
+        if (c.getOffice(division, city).avgEne < EMP_STAT_CHECK_VALUE) {
+          c.buyCoffee(division, city);
+        }
+      }
+      stage.lastEmpStatsCheck = -1;
+    }
+    empStatOk = checkEmployeeStats(ns, division);
   }
 }
 
 export function manageInvestors(ns: NS, minValue: number, round: number): boolean {
   const c = ns.corporation;
   const offer = c.getInvestmentOffer();
+  ns.print('INFO Investment wanted round: ', round);
+  ns.print('INFO Investment current round: ', offer.round);
+  ns.print('INFO Investment wanted funds: ', ns.formatNumber(minValue));
+  ns.print('INFO Investment current funds: ', ns.formatNumber(offer.funds));
   if (offer && offer.round === round && offer.funds > minValue) return c.acceptInvestmentOffer();
   return false;
 }
 
-export function manageAevumEmployees(ns: NS, size: number) {
+export function manageAevumEmployees(ns: NS) {
   const c = ns.corporation;
   while (c.hireEmployee(TOB_DIV_NAME, ns.enums.CityName.Aevum)) {}
-
-  const baseline = Math.floor(size / 7);
-  const business = Math.floor(baseline / 2);
-  let remaining = business + baseline * 3;
-
+  const all = c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).employees;
+  const baseline = Math.floor((all * 2) / 7);
+  const bus = Math.floor(baseline / 2);
+  let remaining = all - bus - baseline * 3;
   let ops = baseline;
   let eng = baseline;
   let man = baseline;
@@ -246,12 +282,16 @@ export function manageAevumEmployees(ns: NS, size: number) {
       }
     }
     remaining--;
-    step = step == 2 ? 0 : step++;
+    step++;
+    if (step > 2) step = 0;
   }
-
+  c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.OPS, 0);
+  c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.ENG, 0);
+  c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.BUS, 0);
+  c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.MAN, 0);
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.OPS, ops);
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.ENG, eng);
-  c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.BUS, business);
+  c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.BUS, bus);
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.MAN, man);
 }
 
@@ -269,13 +309,13 @@ export function checkAgriSetupStage(ns: NS): CorpSetupStage | undefined {
     currentStage = setSubstage(CORP_AGRI_SETUP_STAGE, 2);
   } else if (c.getDivision(AGRI_DIV_NAME).awareness + c.getDivision(AGRI_DIV_NAME).popularity < 0.1) {
     currentStage = setSubstage(CORP_AGRI_SETUP_STAGE, 3);
-  } else if (!checkAgroWarehouse(ns, 2)) {
+  } else if (!checkAgroWarehouse(ns, 300)) {
     currentStage = setSubstage(CORP_AGRI_SETUP_STAGE, 4);
   } else if (!checkUpgrades(ns, 2)) {
     currentStage = setSubstage(CORP_AGRI_SETUP_STAGE, 5);
   } else if (!checkAgroMaterials(ns, AGRI_MATERIAL.stage1)) {
     currentStage = setSubstage(CORP_AGRI_SETUP_STAGE, 6);
-  } else if (!checkEmployeeStats(ns)) {
+  } else if (checkAgriEmpNumSetup(ns) && !checkEmployeeStats(ns, AGRI_DIV_NAME)) {
     currentStage = setSubstage(CORP_AGRI_SETUP_STAGE, 7);
   }
   return currentStage;
@@ -291,15 +331,15 @@ export function checkAgriManStage(ns: NS): CorpSetupStage | undefined {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 1);
   } else if (!checkUpgrades(ns, 10, [UPGRADES.SFA, UPGRADES.SST])) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 2);
-  } else if (!checkAgroWarehouse(ns, 9)) {
+  } else if (!checkAgroWarehouse(ns, 2000)) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 3);
   } else if (!checkAgroMaterials(ns, AGRI_MATERIAL.stage2)) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 4);
-  } else if (!checkEmployeeStats(ns)) {
+  } else if (!checkAgroEmployees(ns, true)) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 5);
   } else if (c.getInvestmentOffer().round === 2) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 6);
-  } else if (!checkAgroWarehouse(ns, 18)) {
+  } else if (!checkAgroWarehouse(ns, 3800)) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 7);
   } else if (!checkAgroMaterials(ns, AGRI_MATERIAL.stage3)) {
     currentStage = setSubstage(CORP_AGRI_MAN_STAGE, 8);
@@ -316,7 +356,7 @@ export function checkTobSetupStage(ns: NS): CorpSetupStage | undefined {
     return CORP_TOB_SETUP_STAGE;
   } else if (c.getDivision(TOB_DIV_NAME).cities.length < Object.keys(ns.enums.CityName).length) {
     currentStage = setSubstage(CORP_TOB_SETUP_STAGE, 1);
-  } else if (checkTobEmployees(ns, 30)) {
+  } else if (!checkTobEmployees(ns, 30)) {
     currentStage = setSubstage(CORP_TOB_SETUP_STAGE, 2);
   } else if (
     c.getDivision(TOB_DIV_NAME).products.length === 0 &&
