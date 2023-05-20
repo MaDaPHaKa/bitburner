@@ -7,13 +7,12 @@ import {
 } from 'const/scripts';
 import { XP_FARMER_SERVER_PREFIX } from 'const/servers';
 import { ServerInfo } from 'utils/server-info';
-import { loadTargetInfo, loadTargetNames } from 'utils/target-loader';
+import { loadTargetInfo } from 'utils/target-loader';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
   //const servers = ns.args;
-  const servers: string[] = await loadTargetNames(ns);
   const targetInfo: ServerInfo[] = (await loadTargetInfo(ns)) as ServerInfo[];
   const ordinati = targetInfo
     .sort(function (a, b) {
@@ -35,7 +34,7 @@ export async function main(ns: NS) {
     //checkServer(ns, servers, 'srv-10');
     const servers = ns.getPurchasedServers().filter((el) => el != 'home' && el != XP_FARMER_SERVER_PREFIX);
     let i = 0;
-    for (let server of servers) {
+    for (const server of servers) {
       checkServerSingoloTarget(ns, ordinati[i], server);
       i++;
       if (i >= ordinati.length) i = 0;
@@ -47,7 +46,13 @@ export async function main(ns: NS) {
   }
 }
 
-function startScriptHost(ns: NS, host: string, target: string, script: string, otherArgs: any[]) {
+function startScriptHost(
+  ns: NS,
+  host: string,
+  target: string,
+  script: string,
+  otherArgs: (string | number | boolean)[]
+) {
   if (!host || !target) return;
   const scriptRam = ns.getScriptRam(script);
   const serverRam = ns.getServerMaxRam(host);
@@ -57,36 +62,7 @@ function startScriptHost(ns: NS, host: string, target: string, script: string, o
   ns.exec(script, host, threads, ...allArgs);
 }
 
-function secuOk(ns: NS, server: string) {
-  const securityThresh = ns.getServerMinSecurityLevel(server) + 5;
-  const serverSec = ns.getServerSecurityLevel(server);
-  return serverSec < securityThresh;
-}
-
 // START SERVER 1
-
-function checkServer(ns: NS, servers: string[], host: string) {
-  for (let server of servers) {
-    const securityThresh = ns.getServerMinSecurityLevel(server);
-    const serverSec = ns.getServerSecurityLevel(server);
-    const secOk = serverSec < securityThresh;
-    const moneyThresh = ns.getServerMaxMoney(server);
-    if (ns.getServerUsedRam(host) > 0) {
-      if (!secOk) {
-        checkAndKillScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [moneyThresh]);
-      } else continue;
-    }
-    const serverMoney = ns.getServerMoneyAvailable(server);
-
-    if (!secOk) {
-      startScriptHost(ns, host, server, SERVER_WEAKEN_SCRIPT_NAME, [securityThresh]);
-    } else if (serverMoney < moneyThresh) {
-      startScriptHost(ns, host, server, SERVER_GROW_SCRIPT_NAME, [moneyThresh]);
-    } else {
-      startScriptHost(ns, host, server, SERVER_HACK_SCRIPT_NAME, [securityThresh, moneyThresh]);
-    }
-  }
-}
 
 function checkServerSingoloTarget(ns: NS, target: string, server: string) {
   if (!target) return;
@@ -111,17 +87,9 @@ function checkServerSingoloTarget(ns: NS, target: string, server: string) {
   }
 }
 
-function checkAndKillScriptHost(ns: NS, host: string, server: string, script: string, otherArgs: any[]) {
-  const scriptRam = ns.getScriptRam(script);
-  const serverRam = ns.getServerMaxRam(host);
-  const threads = Math.floor(serverRam / scriptRam);
-  const allArgs = [server, ...otherArgs, threads];
-  if (ns.isRunning(script, host, ...allArgs)) ns.scriptKill(script, host);
-}
-
 /** @param {NS} ns */
 function checkAutoWeak(ns: NS, servers: string[]) {
-  for (let server of servers) {
+  for (const server of servers) {
     checkAndStartAutoWeak(ns, server);
   }
 }

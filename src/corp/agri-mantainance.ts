@@ -1,32 +1,25 @@
-import { Corporation, CorporationInfo, NS } from '@ns';
-import {
-  AGRI_DIV_NAME,
-  AGRI_MATERIAL,
-  JOBS,
-  ROUND_1_MIN_AMOUNT,
-  ROUND_2_MIN_AMOUNT,
-  UPGRADES
-} from 'const/corp';
+import { NS } from '@ns';
+import { AGRI_DIV_NAME, AGRI_MATERIAL, JOBS, ROUND_1_MIN_AMOUNT, ROUND_2_MIN_AMOUNT, UPGRADES } from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
-import { checkAndUpdateStage, manageInvestors, purchaseAgroMaterials, speedEmployeeStats } from 'corp/utils/functions';
-import { CORP_AGRI_MAN_STAGE, CorpSetupStage } from 'corp/utils/stages';
+import { checkAndUpdateStage, manageInvestors, purchaseAgroMaterials, speedEmployeeStats } from 'corp/corp-functions';
+import { CORP_AGRI_MAN_STAGE, CorpSetupStage } from 'corp/corp-stages';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
-  const c: Corporation = ns.corporation;
+  ns.tail();
+  const c = ns.corporation;
   if (!c.hasCorporation()) {
     ns.print('ERROR no corporation, this script should not have started!');
     ns.spawn(CORP_STARTUP, 1);
   } else {
-    await runStage(ns, c);
+    await runStage(ns);
   }
 }
 
-async function runStage(ns: NS, c: Corporation) {
-  const corp: CorporationInfo = c.getCorporation();
+async function runStage(ns: NS) {
   try {
-    let currentStage: CorpSetupStage = checkAndUpdateStage(ns, c, corp);
+    let currentStage: CorpSetupStage = checkAndUpdateStage(ns);
     let setupComplete = false;
     let error = false;
     if (currentStage === undefined) {
@@ -44,7 +37,7 @@ async function runStage(ns: NS, c: Corporation) {
       ns.print('INFO: Cycle start stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
-          manageStage(ns, c, currentStage);
+          await manageStage(ns, currentStage);
           break;
         }
         // this should not be needed.. better safe than sorry :D
@@ -53,9 +46,8 @@ async function runStage(ns: NS, c: Corporation) {
           break;
         }
       }
-      if (setupComplete)
-        break;
-      currentStage = checkAndUpdateStage(ns, c, corp, currentStage);
+      if (setupComplete) break;
+      currentStage = checkAndUpdateStage(ns, currentStage);
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       await ns.sleep(500);
     }
@@ -70,10 +62,11 @@ async function runStage(ns: NS, c: Corporation) {
   }
 }
 
-function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
+async function manageStage(ns: NS, currentStage: CorpSetupStage) {
+  const c = ns.corporation;
   switch (currentStage.subStage.val) {
     case 0: {
-      manageInvestors(c, ROUND_1_MIN_AMOUNT, 1);
+      manageInvestors(ns, ROUND_1_MIN_AMOUNT, 1);
       break;
     }
     case 1: {
@@ -82,7 +75,7 @@ function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
         if (office.size < 9) {
           const toAdd = 9 - office.size;
           c.upgradeOfficeSize(AGRI_DIV_NAME, city, toAdd);
-          while (c.hireEmployee(AGRI_DIV_NAME, city)) { }
+          while (c.hireEmployee(AGRI_DIV_NAME, city)) {}
           c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.OPS, 1);
           c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.ENG, 1);
           c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.BUS, 1);
@@ -109,11 +102,11 @@ function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
       break;
     }
     case 4: {
-      purchaseAgroMaterials(ns, c, AGRI_MATERIAL.stage2);
+      await purchaseAgroMaterials(ns, AGRI_MATERIAL.stage2);
       break;
     }
     case 5: {
-      speedEmployeeStats(ns, c, currentStage);
+      speedEmployeeStats(ns, currentStage);
       break;
     }
     case 6: {
@@ -124,9 +117,10 @@ function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.BUS, 2);
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.MAN, 2);
       }
-      manageInvestors(c, ROUND_2_MIN_AMOUNT, 1);
+      manageInvestors(ns, ROUND_2_MIN_AMOUNT, 1);
       break;
     }
+
     case 7: {
       for (const city of Object.values(ns.enums.CityName)) {
         while (c.getWarehouse(AGRI_DIV_NAME, city).level < 18) {
@@ -136,7 +130,7 @@ function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage) {
       break;
     }
     case 8: {
-      purchaseAgroMaterials(ns, c, AGRI_MATERIAL.stage3);
+      await purchaseAgroMaterials(ns, AGRI_MATERIAL.stage3);
       break;
     }
   }

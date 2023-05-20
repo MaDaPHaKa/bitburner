@@ -1,13 +1,22 @@
-import { Corporation, CorporationInfo, NS } from '@ns';
-import { JOBS, TOB_DIV_NAME, TOB_PROD1_NAME, TOB_PROD2_NAME, UPGRADES } from 'const/corp';
+import { Corporation, NS } from '@ns';
+import {
+  JOBS,
+  TOBACCHI_MIN_INVESTMENT_VALUE,
+  TOB_DIV_NAME,
+  TOB_PROD1_NAME,
+  TOB_PROD2_NAME,
+  UPGRADES,
+} from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
-import { checkAndSpeedEmpStats, checkAndUpdateStage, manageProductSell } from 'corp/utils/functions';
-import { CORP_TOB_SETUP_STAGE, CorpSetupStage } from 'corp/utils/stages';
+import { checkAndSpeedEmpStats, checkAndUpdateStage } from 'corp/corp-functions';
+import { CORP_TOB_SETUP_STAGE, CorpSetupStage } from 'corp/corp-stages';
+import { manageProductSell } from 'corp/product-functions';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
-  const c: Corporation = ns.corporation;
+  ns.tail();
+  const c = ns.corporation;
   if (!c.hasCorporation()) {
     ns.print('ERROR no corporation, this script should not have started!');
     ns.spawn(CORP_STARTUP, 1);
@@ -17,9 +26,8 @@ export async function main(ns: NS) {
 }
 
 async function runStage(c: Corporation, ns: NS) {
-  const corp: CorporationInfo = c.getCorporation();
   try {
-    let currentStage: CorpSetupStage = checkAndUpdateStage(ns, c, corp);
+    let currentStage: CorpSetupStage = checkAndUpdateStage(ns);
     let setupComplete = false;
     let error = false;
     if (currentStage === undefined) {
@@ -46,9 +54,8 @@ async function runStage(c: Corporation, ns: NS) {
           break;
         }
       }
-      if (setupComplete)
-        break;
-      currentStage = checkAndUpdateStage(ns, c, corp, currentStage);
+      if (setupComplete) break;
+      currentStage = checkAndUpdateStage(ns, currentStage);
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       await ns.sleep(500);
     }
@@ -86,8 +93,14 @@ async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage)
       break;
     }
     case 3: {
-      c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, TOB_PROD1_NAME, 1e9, 1e9);
-      checkAndSpeedEmpStats(ns, c, currentStage);
+      c.makeProduct(
+        TOB_DIV_NAME,
+        ns.enums.CityName.Aevum,
+        TOB_PROD1_NAME,
+        TOBACCHI_MIN_INVESTMENT_VALUE,
+        TOBACCHI_MIN_INVESTMENT_VALUE
+      );
+      checkAndSpeedEmpStats(ns, currentStage);
       break;
     }
     case 4: {
@@ -106,12 +119,18 @@ async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage)
     }
     case 5: {
       const prod1 = c.getProduct(TOB_DIV_NAME, TOB_PROD1_NAME);
-      if (prod1.developmentProgress == 100) {
+      if (prod1.developmentProgress >= 100) {
         try {
           c.getProduct(TOB_DIV_NAME, TOB_PROD2_NAME);
         } catch (e) {
           if (c.getCorporation().funds > 1e9 * 3)
-            c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, TOB_PROD2_NAME, 1e9, 1e9);
+            c.makeProduct(
+              TOB_DIV_NAME,
+              ns.enums.CityName.Aevum,
+              TOB_PROD2_NAME,
+              TOBACCHI_MIN_INVESTMENT_VALUE,
+              TOBACCHI_MIN_INVESTMENT_VALUE
+            );
         }
         await manageProductSell(ns, c, prod1);
       }
@@ -132,7 +151,7 @@ async function manageStage(ns: NS, c: Corporation, currentStage: CorpSetupStage)
 function hireIntoAevum(ns: NS, c: Corporation) {
   const toAdd = 30 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).employees;
   if (toAdd > 0) c.upgradeOfficeSize(TOB_DIV_NAME, ns.enums.CityName.Aevum, toAdd);
-  while (c.hireEmployee(TOB_DIV_NAME, ns.enums.CityName.Aevum)) { }
+  while (c.hireEmployee(TOB_DIV_NAME, ns.enums.CityName.Aevum)) {}
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.OPS, 8);
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.ENG, 9);
   c.setAutoJobAssignment(TOB_DIV_NAME, ns.enums.CityName.Aevum, JOBS.BUS, 5);
@@ -143,7 +162,7 @@ function hireIntoOthers(ns: NS, c: Corporation) {
   for (const city of Object.values(ns.enums.CityName).filter((el) => el !== ns.enums.CityName.Aevum)) {
     const toAdd = 9 - c.getOffice(TOB_DIV_NAME, city).employees;
     if (toAdd > 0) c.upgradeOfficeSize(TOB_DIV_NAME, city, toAdd);
-    while (c.hireEmployee(TOB_DIV_NAME, city)) { }
+    while (c.hireEmployee(TOB_DIV_NAME, city)) {}
     c.setAutoJobAssignment(TOB_DIV_NAME, city, JOBS.BUS, 1);
     c.setAutoJobAssignment(TOB_DIV_NAME, city, JOBS.ENG, 1);
     c.setAutoJobAssignment(TOB_DIV_NAME, city, JOBS.MAN, 1);

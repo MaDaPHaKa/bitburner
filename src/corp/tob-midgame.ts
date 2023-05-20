@@ -1,9 +1,9 @@
-import { Corporation, CorporationInfo, NS } from '@ns';
-import { TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
+import { Corporation, NS } from '@ns';
+import { TOBACCHI_MIN_INVESTMENT_VALUE, TOB_DIV_NAME, TOB_PROD2_NAME, TOB_PROD3_NAME } from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
-import { manageProductSell } from 'corp/tobacchi/product-functions';
-import { checkAndUpdateStage, manageAevumEmployees, } from 'corp/utils/functions';
-import { CORP_TOB_MIDGAME_STAGE, CorpSetupStage } from 'corp/utils/stages';
+import { checkAndUpdateStage, manageAevumEmployees } from 'corp/corp-functions';
+import { CORP_TOB_MIDGAME_STAGE, CorpSetupStage } from 'corp/corp-stages';
+import { manageProductSell } from 'corp/product-functions';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -18,9 +18,8 @@ export async function main(ns: NS) {
 }
 
 async function runStage(c: Corporation, ns: NS) {
-  const corp: CorporationInfo = c.getCorporation();
   try {
-    let currentStage: CorpSetupStage = checkAndUpdateStage(ns, c, corp);
+    let currentStage: CorpSetupStage = checkAndUpdateStage(ns);
     let setupComplete = false;
     let error = false;
     if (currentStage === undefined) {
@@ -47,9 +46,8 @@ async function runStage(c: Corporation, ns: NS) {
           break;
         }
       }
-      if (setupComplete)
-        break;
-      currentStage = checkAndUpdateStage(ns, c, corp, currentStage);
+      if (setupComplete) break;
+      currentStage = checkAndUpdateStage(ns, currentStage);
       ns.print('INFO: Cycle end stage: ', `${currentStage.mainStage.name}-${currentStage.subStage.name}`);
       await ns.sleep(500);
     }
@@ -67,15 +65,21 @@ async function runStage(c: Corporation, ns: NS) {
 async function manageStage(ns: NS, c: Corporation) {
   hireIntoAevum(ns, c);
   const prod2 = c.getProduct(TOB_DIV_NAME, TOB_PROD2_NAME);
-  if (prod2.developmentProgress == 100) {
+  if (prod2.developmentProgress >= 100) {
     try {
       const prod3 = c.getProduct(TOB_DIV_NAME, TOB_PROD3_NAME);
-      if (prod3.developmentProgress == 100) {
+      if (prod3.developmentProgress >= 100) {
         await manageProductSell(ns, c, prod3);
       }
     } catch (e) {
       if (c.getCorporation().funds > 1e9 * 2)
-        c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, TOB_PROD3_NAME, 1e9, 1e9);
+        c.makeProduct(
+          TOB_DIV_NAME,
+          ns.enums.CityName.Aevum,
+          TOB_PROD3_NAME,
+          TOBACCHI_MIN_INVESTMENT_VALUE,
+          TOBACCHI_MIN_INVESTMENT_VALUE
+        );
     }
     await manageProductSell(ns, c, prod2);
   }
@@ -85,6 +89,6 @@ function hireIntoAevum(ns: NS, c: Corporation) {
   const toAdd = 60 - c.getOffice(TOB_DIV_NAME, ns.enums.CityName.Aevum).employees;
   if (toAdd > 0) {
     c.upgradeOfficeSize(TOB_DIV_NAME, ns.enums.CityName.Aevum, toAdd);
-    manageAevumEmployees(ns, c, 60);
+    manageAevumEmployees(ns, 60);
   }
 }

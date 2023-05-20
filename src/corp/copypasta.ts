@@ -52,13 +52,13 @@ export async function main(ns: NS) {
   await checkStage(); //once here to start the corp
   //Basic corp script loop, works fine with or without bonus time
   while (true) {
-    while (c.getCorporation().state != 'EXPORT') {
+    while (c.getCorporation().state !== 'EXPORT') {
       //when you make your main script, put things you want to be done
       //potentially multiple times every cycle, like buying upgrades, here.
       await ns.sleep(0);
     }
 
-    while (c.getCorporation().state == 'EXPORT') {
+    while (c.getCorporation().state === 'EXPORT') {
       //same as above
       await ns.sleep(0);
     }
