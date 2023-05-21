@@ -45,17 +45,6 @@ async function runStage(c: Corporation, ns: NS) {
     const expectedStageVal = CORP_TOB_MANTAINANCE_STAGE.mainStage.val;
     while (currentStage !== undefined && currentStage.mainStage.val === expectedStageVal) {
       ns.print('INFO: Cycle start');
-      while (c.getCorporation().state !== 'EXPORT') {
-        //when you make your main script, put things you want to be done
-        //potentially multiple times every cycle, like buying upgrades, here.
-        await ns.sleep(0);
-      }
-
-      while (c.getCorporation().state === 'EXPORT') {
-        //same as above
-        await ns.sleep(0);
-      }
-      //and to this part put things you want done exactly once per cycle
       switch (currentStage.mainStage.val) {
         case expectedStageVal: {
           await manageStage(ns, c, currentStage);
@@ -88,6 +77,21 @@ async function runStage(c: Corporation, ns: NS) {
 }
 
 async function manageStage(ns: NS, c: Corporation, stage: CorpSetupStage) {
+  while (c.getCorporation().state !== 'EXPORT') {
+    //when you make your main script, put things you want to be done
+    //potentially multiple times every cycle, like buying upgrades, here.
+    await checkWilson(ns, c);
+    await adsOrEmployees(ns, c);
+    await ns.sleep(0);
+  }
+
+  while (c.getCorporation().state === 'EXPORT') {
+    //same as above
+    await checkWilson(ns, c);
+    await adsOrEmployees(ns, c);
+    await ns.sleep(0);
+  }
+  //and to this part put things you want done exactly once per cycle
   manageMoney(ns, c);
   ns.print('INFO Check reasearch');
   checkReasearch(ns, c);
@@ -99,12 +103,9 @@ async function manageStage(ns: NS, c: Corporation, stage: CorpSetupStage) {
   upgradeOtherCities(ns, c);
   ns.print('INFO Check emp stats');
   await speedEmployeeStats(ns, stage);
+  await checkAndstartDevelop(ns, c);
   ns.print('INFO Check products');
-  if (hasNoConfiguredProducts(c)) {
-    await checkProducts(ns, c);
-  } else {
-    startDevelop(ns, c);
-  }
+  await checkProducts(ns, c);
 }
 
 function manageMoney(ns: NS, c: Corporation) {
@@ -141,22 +142,24 @@ function checkReasearch(ns: NS, c: Corporation) {
   }
 }
 
-function hasNoConfiguredProducts(c: Corporation): boolean {
-  const products = c.getDivision(TOB_DIV_NAME).products;
-  return products.some((product) => prodNotSelling(c.getProduct(TOB_DIV_NAME, product)));
-}
-
-function startDevelop(ns: NS, c: Corporation) {
+async function checkAndstartDevelop(ns: NS, c: Corporation) {
   const products = c.getDivision(TOB_DIV_NAME).products;
   const prods: Product[] = [];
   for (const product of products) {
     prods.push(c.getProduct(TOB_DIV_NAME, product));
   }
-  const prodToUpdate = prods.sort((a, b) => a.rat - b.rat)[0];
-  const prodName = prodToUpdate.name;
-  c.discontinueProduct(TOB_DIV_NAME, prodName);
-  const investment = Math.floor(c.getCorporation().funds / 3);
-  c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, prodName, investment, investment);
+  if (prods.map((el) => el.developmentProgress).filter((el) => el < 100).length <= 0) {
+    ns.print('INFO start develop');
+    let prodToUpdate = prods.sort((a, b) => a.rat - b.rat)[0];
+    const prodName = prodToUpdate.name;
+    while (prodToUpdate.cityData.Aevum[0] > 0) {
+      await ns.sleep(5000);
+      prodToUpdate = c.getProduct(TOB_DIV_NAME, prodName);
+    }
+    c.discontinueProduct(TOB_DIV_NAME, prodName);
+    const investment = Math.floor(c.getCorporation().funds / 3);
+    c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, prodName, investment, investment);
+  }
 }
 
 async function checkProducts(ns: NS, c: Corporation) {
