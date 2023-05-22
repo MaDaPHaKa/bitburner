@@ -1,5 +1,5 @@
 export class ServerInfo {
-  name: string = '';
+  name = '';
   minSecurity = -1;
   maxMoney = -1;
   weakenTm = Infinity;
@@ -12,7 +12,6 @@ export class ServerInfo {
   score = -1;
   hwgwScore = -1;
   farmScore = -1;
-  constructor() {}
 
   calcolaScore() {
     const hackLevelFactor = this.minHackLevel > this.currHackLevel * 0.65 ? 0.4 : 1;
@@ -25,6 +24,8 @@ export class ServerInfo {
     }
     if (this.hackChance > 0.8) {
       this.hwgwScore = this.score;
+    } else {
+      this.hwgwScore = this.score / 2;
     }
 
     if (this.hackXp > 0) {

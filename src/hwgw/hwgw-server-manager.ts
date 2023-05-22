@@ -9,6 +9,7 @@ import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from 'utils/server-data';
+import { LOG_MANAGER_PORT } from '/const/ports';
 
 export class HwgwServerManager {
   ns: NS;
@@ -52,7 +53,7 @@ export class HwgwServerManager {
         iteration++;
       }
     }
-    if (serverBatches.length <= 0) return false;
+
     for (let i = 0; i < serverBatches.length; i++) {
       const serverBatch = serverBatches[i];
       serverBatch.ricalcolaSleep();

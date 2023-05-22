@@ -22,10 +22,10 @@ export class HwgwServerBatch {
   weakHackEndTime: number;
   growEndTime: number;
   weakGrowEndTime: number;
-  hackThreads: number = 0;
-  hackWeakThreads: number = 0;
-  growThreads: number = 0;
-  growWeakThreads: number = 0;
+  hackThreads = 0;
+  hackWeakThreads = 0;
+  growThreads = 0;
+  growWeakThreads = 0;
   server: ServerData;
   target: HwgwServerInfo;
   calc: HwgOpsCalulator;
@@ -97,7 +97,7 @@ export class HwgwServerBatch {
     return [JSON.stringify(prop), randomArg];
   }
 
-  getGrowWeakArgs(randomArg: number, portSeed: number = 0): (boolean | string | number)[] {
+  getGrowWeakArgs(randomArg: number, portSeed = 0): (boolean | string | number)[] {
     const prop: HwgwWorkerProp = new HwgwWorkerProp(
       this.target.name,
       this.weakTime,
@@ -137,9 +137,9 @@ export class HwgwServerBatch {
     const cores = this.server.cores;
     this.hackThreads = calc.calcolaHackThread(percentage);
     this.growThreads = calc.calcolaGrowThreads(target.maxMoney - target.maxMoney * percentage, cores);
-    let WEAKEN_PER_THREAD = ns.weakenAnalyze(1, cores);
-    let HW_THREADS = HACK_SEC_INCREASE / WEAKEN_PER_THREAD;
-    let GW_THREADS = ns.growthAnalyzeSecurity(1, undefined, cores) / WEAKEN_PER_THREAD;
+    const WEAKEN_PER_THREAD = ns.weakenAnalyze(1, cores);
+    const HW_THREADS = HACK_SEC_INCREASE / WEAKEN_PER_THREAD;
+    const GW_THREADS = ns.growthAnalyzeSecurity(1, undefined, cores) / WEAKEN_PER_THREAD;
     this.hackWeakThreads = Math.max(1, Math.ceil(HW_THREADS * this.hackThreads));
     this.growWeakThreads = Math.max(1, Math.ceil(GW_THREADS * this.growThreads));
   }

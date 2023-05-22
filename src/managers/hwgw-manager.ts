@@ -8,7 +8,6 @@ import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerInfo } from 'utils/server-info';
 import { loadTargetInfo } from 'utils/target-loader';
-import { info } from '/logs/logger';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -48,9 +47,11 @@ export async function main(ns: NS) {
     //     return b.hwgwScore - a.hwgwScore;
     //   })
     //   .slice(0, 2);
-    const toPrep: HwgwServerInfo[] = serverInfo.filter(
-      (el) => !el.prepped && (!batches.has(el.name) || !batches.get(el.name)?.running)
-    );
+    const toPrep: HwgwServerInfo[] = serverInfo
+      .filter((el) => !el.prepped && (!batches.has(el.name) || !batches.get(el.name)?.running))
+      .sort(function (a, b) {
+        return b.hwgwScore - a.hwgwScore;
+      });
     const toBatch: HwgwServerInfo[] = serverInfo
       .filter((el) => el.prepped)
       .sort(function (a, b) {
@@ -138,11 +139,11 @@ function creaBatch(calc: HwgOpsCalulator) {
 
 async function prepServers(ns: NS, toPrep: HwgwServerInfo[], preppin: string[], serverMgr: HwgwServerManager) {
   let portSeed = 1;
+  let prepStarted = false;
   for (const daPreparare of toPrep) {
     if (preppin.includes(daPreparare.name)) continue;
     serverMgr.aggiornaUtilizzo();
     if (!serverMgr.serverLiberi()) return;
-
     const calc: HwgOpsCalulator = new HwgOpsCalulator(ns, daPreparare);
     const weakTime = calc.calcolaWeakTime();
     const growTime = calc.calcolaGrowTime(calc.calcolaHackTime(weakTime));
@@ -151,13 +152,17 @@ async function prepServers(ns: NS, toPrep: HwgwServerInfo[], preppin: string[], 
     batch.calcolaWgwThreads(ns, daPreparare, calc);
 
     const ramNecessaria = batch.getNeededRam();
-    if (!serverMgr.canRun(ramNecessaria)) return;
+    if (!serverMgr.canRun(ramNecessaria)) {
+      continue;
+    }
+    prepStarted = true;
     serverMgr.avviaWgwBatch(daPreparare.name, batch);
     preppin.push(daPreparare.name);
     if (portSeed > 4) portSeed = 1;
     else portSeed++;
   }
-  if (toPrep.length > 0) await ns.sleep(1000);
+  // wait a moment to let the prep start and have correct ram info on batching
+  if (prepStarted) await ns.sleep(500);
 }
 
 // ------------------------------------------------------

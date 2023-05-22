@@ -8,7 +8,7 @@ import { ServerInfo } from 'utils/server-info';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  let lastScanRun = Date.now();
+  const lastScanRun = Date.now();
   let scanResult: ScanResult = await scan(ns);
   while (true) {
     ns.disableLog('ALL');
@@ -29,7 +29,7 @@ async function scan(ns: NS): Promise<ScanResult> {
 
 async function getStats(ns: NS, targets: string[]): Promise<void> {
   let serverInfo: ServerInfo[] = [];
-  for (let target of targets) {
+  for (const target of targets) {
     const minSecurity = ns.getServerMinSecurityLevel(target);
     const maxMoney = ns.getServerMaxMoney(target);
     const serverMoney = ns.getServerMoneyAvailable(target);
