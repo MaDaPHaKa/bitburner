@@ -194,7 +194,7 @@ async function checkAndAdjustProdRate(ns: NS, c: Corporation, p: Product): Promi
     if ((state === 'increment' && previousState === 'lower') || (state === 'lower' && previousState === 'increment')) {
       consecutiveIncrLower++;
       if (consecutiveIncrLower > consecutiveCycles) forceOne = true;
-      if (forceOne && state === 'lower' && rate < 0 && consecutiveIncrLower > consecutiveCycles * 2) {
+      if (forceOne && state === 'increment' && rate < 0 && consecutiveIncrLower > consecutiveCycles * 2) {
         ns.print('WARN infinite increment,lower loop, lower multiplier by one just in case and force exit');
         multiplier -= 1;
         state = 'end';

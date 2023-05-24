@@ -76,9 +76,9 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
           const toAdd = 9 - office.size;
           c.upgradeOfficeSize(AGRI_DIV_NAME, city, toAdd);
           while (c.hireEmployee(AGRI_DIV_NAME, city)) {}
-          c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.OPS, 1);
-          c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.ENG, 1);
-          c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.BUS, 1);
+          c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.OPS, 2);
+          c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.ENG, 2);
+          c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.BUS, 2);
           c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.MAN, 2);
           c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.RND, 1);
         }
@@ -106,7 +106,7 @@ async function manageStage(ns: NS, currentStage: CorpSetupStage) {
       break;
     }
     case 5: {
-      await ns.sleep(60 * 2 * 1000);
+      await ns.sleep(30 * 1000);
       for (const city of Object.values(ns.enums.CityName)) {
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.RND, 0);
         c.setAutoJobAssignment(AGRI_DIV_NAME, city, JOBS.OPS, 3);

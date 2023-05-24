@@ -1,6 +1,9 @@
 import { Corporation, NS, Product } from '@ns';
 import {
   ADV_OR_HIRE_FUNDS_CHECK_MULTIPLIER,
+  CORP_OP_UPGRADES,
+  CORP_OP_UPGRADES_LEVEL,
+  CORP_OP_UPGRADES_UNLOCK_AT,
   CorpResearchName,
   JOBS,
   ROUND_3_MIN_AMOUNT,
@@ -8,10 +11,18 @@ import {
   TOBACCHI_LAB_POINT_THRESHOLD,
   TOBACCHI_MK_POINT_THRESHOLD,
   TOB_DIV_NAME,
+  TOB_PROD4_NAME,
+  TOB_PROD5_NAME,
   UPGRADES,
 } from 'const/corp';
 import { CORP_STARTUP } from 'const/scripts';
-import { checkAndUpdateStage, manageAevumEmployees, manageInvestors, speedEmployeeStats } from 'corp/corp-functions';
+import {
+  checkAndUpdateStage,
+  checkProductAtLeastDevelopment,
+  manageAevumEmployees,
+  manageInvestors,
+  speedEmployeeStats,
+} from 'corp/corp-functions';
 import { CORP_TOB_MANTAINANCE_STAGE, CorpSetupStage } from 'corp/corp-stages';
 import { manageProductSell, prodNotSelling } from 'corp/product-functions';
 
@@ -82,6 +93,7 @@ async function manageStage(ns: NS, c: Corporation, stage: CorpSetupStage) {
     //potentially multiple times every cycle, like buying upgrades, here.
     await checkWilson(ns, c);
     await adsOrEmployees(ns, c);
+    checkUpgrades(ns, c);
     await ns.sleep(0);
   }
 
@@ -89,6 +101,7 @@ async function manageStage(ns: NS, c: Corporation, stage: CorpSetupStage) {
     //same as above
     await checkWilson(ns, c);
     await adsOrEmployees(ns, c);
+    checkUpgrades(ns, c);
     await ns.sleep(0);
   }
   //and to this part put things you want done exactly once per cycle
@@ -106,6 +119,7 @@ async function manageStage(ns: NS, c: Corporation, stage: CorpSetupStage) {
   await checkAndstartDevelop(ns, c);
   ns.print('INFO Check products');
   await checkProducts(ns, c);
+  checkUpgrades(ns, c);
 }
 
 function manageMoney(ns: NS, c: Corporation) {
@@ -148,11 +162,30 @@ async function checkAndstartDevelop(ns: NS, c: Corporation) {
   for (const product of products) {
     prods.push(c.getProduct(TOB_DIV_NAME, product));
   }
+  let availableNumberOfProds = 3;
+  if (c.hasResearched(TOB_DIV_NAME, CorpResearchName.UPG_CAP1)) {
+    availableNumberOfProds++;
+  }
+  if (c.hasResearched(TOB_DIV_NAME, CorpResearchName.UPG_CAP2)) {
+    availableNumberOfProds++;
+  }
+  const currentNumberOfProds = prods.length;
+  if (currentNumberOfProds < availableNumberOfProds) {
+    let investment = Math.floor(c.getCorporation().funds / 3);
+    if (!checkProductAtLeastDevelopment(ns, TOB_DIV_NAME, TOB_PROD4_NAME))
+      c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, TOB_PROD4_NAME, investment, investment);
+    investment = Math.floor(c.getCorporation().funds / 3);
+    if (!checkProductAtLeastDevelopment(ns, TOB_DIV_NAME, TOB_PROD5_NAME))
+      c.makeProduct(TOB_DIV_NAME, ns.enums.CityName.Aevum, TOB_PROD5_NAME, investment, investment);
+  }
   if (prods.map((el) => el.developmentProgress).filter((el) => el < 100).length <= 0) {
     ns.print('INFO start develop');
     let prodToUpdate = prods.sort((a, b) => a.rat - b.rat)[0];
     const prodName = prodToUpdate.name;
     while (prodToUpdate.cityData.Aevum[0] > 0) {
+      for (const city of Object.values(ns.enums.CityName)) {
+        c.limitProductProduction(TOB_DIV_NAME, city, prodName, 0);
+      }
       await ns.sleep(5000);
       prodToUpdate = c.getProduct(TOB_DIV_NAME, prodName);
     }
@@ -253,4 +286,17 @@ function enableMkTa(ns: NS, c: Corporation, prodName: string) {
   }
   c.setProductMarketTA1(TOB_DIV_NAME, prodName, true);
   c.setProductMarketTA2(TOB_DIV_NAME, prodName, true);
+}
+
+function checkUpgrades(ns: NS, c: Corporation) {
+  if (c.getCorporation().funds > CORP_OP_UPGRADES_UNLOCK_AT) {
+    for (const upgr of CORP_OP_UPGRADES) {
+      while (
+        c.getUpgradeLevel(upgr) < CORP_OP_UPGRADES_LEVEL &&
+        c.getUpgradeLevelCost(upgr) < c.getCorporation().funds
+      ) {
+        c.levelUpgrade(upgr);
+      }
+    }
+  }
 }

@@ -3,6 +3,7 @@ import {
   AGRI_DIV_NAME,
   AGRI_MATERIAL,
   AgriMaterialStage,
+  BN_VAL_MULTI,
   CORP_SETUP_UPGRADES,
   EMP_STATS_CHECK_TIMEOUT,
   EMP_STAT_CHECK_VALUE,
@@ -14,6 +15,7 @@ import {
   TOB_PROD2_NAME,
   UNLOCKS,
   UPGRADES,
+  VAL_MULTI_EQ,
 } from 'const/corp';
 import {
   CORP_AGRI_MAN_STAGE,
@@ -247,11 +249,13 @@ export async function speedEmployeeStats(ns: NS, stage: CorpSetupStage) {
 export function manageInvestors(ns: NS, minValue: number, round: number): boolean {
   const c = ns.corporation;
   const offer = c.getInvestmentOffer();
+  const bnEvalued = minValue * (BN_VAL_MULTI + BN_VAL_MULTI * VAL_MULTI_EQ);
   ns.print('INFO Investment wanted round: ', round);
   ns.print('INFO Investment current round: ', offer.round);
   ns.print('INFO Investment wanted funds: ', ns.formatNumber(minValue));
+  ns.print('INFO Investment BN coeff funds: ', ns.formatNumber(bnEvalued));
   ns.print('INFO Investment current funds: ', ns.formatNumber(offer.funds));
-  if (offer && offer.round === round && offer.funds > minValue) return c.acceptInvestmentOffer();
+  if (offer && offer.round === round && offer.funds > bnEvalued) return c.acceptInvestmentOffer();
   return false;
 }
 

@@ -12,6 +12,9 @@ export const ROUND_2_MIN_AMOUNT = 5e12; //5t
 export const ROUND_3_MIN_AMOUNT = 8e14; //800t
 export const ROUND_4_MIN_AMOUNT = 5e17; //500q
 
+export const BN_VAL_MULTI = 1;
+export const VAL_MULTI_EQ = 0;
+
 export const EMP_STAT_CHECK_VALUE = 97;
 export const EMP_STATS_CHECK_TIMEOUT = 30000;
 export const PARTY_BUDGET = 5e5;
@@ -100,6 +103,18 @@ export enum CorpResearchName {
 }
 
 export const CORP_SETUP_UPGRADES = [UPGRADES.SFA, UPGRADES.FWI, UPGRADES.NAC, UPGRADES.NNI, UPGRADES.NAC];
+export const CORP_OP_UPGRADES = [
+  UPGRADES.SFA,
+  UPGRADES.SST,
+  UPGRADES.SPI,
+  UPGRADES.PIN,
+  UPGRADES.ABC,
+  UPGRADES.FWI,
+  UPGRADES.NNI,
+  UPGRADES.NAC,
+];
+export const CORP_OP_UPGRADES_LEVEL = 3450;
+export const CORP_OP_UPGRADES_UNLOCK_AT = 1e70;
 
 export class AgriMaterials {
   stage1: AgriMaterialStage = new AgriMaterialStage(125, 0, 75, 27000);

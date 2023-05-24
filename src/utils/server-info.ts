@@ -22,7 +22,7 @@ export class ServerInfo {
     if (isNaN(this.score)) {
       this.score = -1;
     }
-    if (this.hackChance > 0.8) {
+    if (this.hackChance >= 0.999) {
       this.hwgwScore = this.score;
     } else {
       this.hwgwScore = this.score / 2;
