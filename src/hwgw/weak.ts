@@ -8,15 +8,19 @@ export async function main(ns: NS) {
   const sleep = prop.scriptEstimatedEnd - prop.scriptExecTime - Date.now();
   if (sleep >= 0) {
     await ns.weaken(prop.target, { additionalMsec: sleep });
-  } else {
+  } else if (prop.debug) {
     warn(ns, `${prop.type} ${prop.target}-${prop.iteration}: weak-${prop.weakType} was ${-sleep} ms too late.`);
   }
-  const end = Date.now();
-  info(
-    ns,
-    `${prop.type} ${prop.target}-${prop.iteration}: weak-${prop.weakType} finished at ${end
-      .toString()
-      .slice(-6)}/${Math.round(prop.scriptEstimatedEnd).toString().slice(-6)}`
-  );
-  if (prop.writePort > -1) ns.tryWritePort(prop.writePort, prop.target);
+  ns.atExit(() => {
+    const end = Date.now();
+    if (prop.debug) {
+      info(
+        ns,
+        `${prop.type} ${prop.target}-${prop.iteration}: weak-${prop.weakType} finished at ${end
+          .toString()
+          .slice(-6)}/${Math.round(prop.scriptEstimatedEnd).toString().slice(-6)}`
+      );
+    }
+    if (prop.writePort > -1) ns.tryWritePort(prop.writePort, prop.target);
+  });
 }

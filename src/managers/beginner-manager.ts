@@ -1,26 +1,18 @@
 import { NS } from '@ns';
 import { SERVER_WEAKEN_V2_SCRIPT_NAME } from 'const/scripts';
 import { XP_FARMER_SERVER_PREFIX } from 'const/servers';
-import { ServerInfo } from 'utils/server-info';
-import { loadTargetInfo, loadTargetNames } from 'utils/target-loader';
+import { loadTargetNames } from 'utils/target-loader';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
   ns.disableLog('ALL');
   //const servers = ns.args;
   const targets: string[] = await loadTargetNames(ns);
-  const targetInfo: ServerInfo[] = (await loadTargetInfo(ns)) as ServerInfo[];
-  // const ordinati = targetInfo
-  //   .filter((el) => el.cheesyScoreTest > 0)
-  //   .sort(function (a, b) {
-  //     return b.cheesyScoreTest - a.cheesyScoreTest;
-  //   })
-  //   .map((el) => el.name);
   const ordinati = [/*'joesguns', 'foodnstuff',*/ 'n00dles'];
   while (true) {
     const servers = ns.getPurchasedServers().filter((el) => el != 'home' && el != XP_FARMER_SERVER_PREFIX);
     let i = 0;
-    for (let server of servers) {
+    for (const server of servers) {
       checkAndStartBeginnerSingoloTarget(ns, server, ordinati[i]);
       i++;
       if (i >= ordinati.length) i = 0;
@@ -33,7 +25,7 @@ export async function main(ns: NS) {
 
 /** @param {NS} ns */
 function checkAutoWeak(ns: NS, servers: string[]) {
-  for (let server of servers) {
+  for (const server of servers) {
     checkAndStartAutoWeak(ns, server);
   }
 }

@@ -11,7 +11,7 @@ export async function main(ns: NS) {
     let handler = new FileHandler(ns, SERVERS_FILENAME);
     const servers = await handler.read();
     let serverInfo: ServerInfo[] = [];
-    for (let target of servers) {
+    for (const target of servers) {
       const minSecurity = ns.getServerMinSecurityLevel(target);
       const maxMoney = ns.getServerMaxMoney(target);
       const serverMoney = ns.getServerMoneyAvailable(target);

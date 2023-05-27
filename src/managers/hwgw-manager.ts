@@ -42,11 +42,6 @@ export async function main(ns: NS) {
       serverInfo.map((el) => el.name)
     );
 
-    // serverInfo = serverInfo
-    //   .sort(function (a, b) {
-    //     return b.hwgwScore - a.hwgwScore;
-    //   })
-    //   .slice(0, 2);
     const toPrep: HwgwServerInfo[] = serverInfo
       .filter((el) => !el.prepped && (!batches.has(el.name) || !batches.get(el.name)?.running))
       .sort(function (a, b) {
@@ -117,7 +112,7 @@ async function batch(
       batches = batches.set(target.name, batch);
       if (portSeed > 4) portSeed = 1;
       else portSeed++;
-      await ns.sleep(1);
+      await ns.sleep(0);
     }
   }
   return batches;

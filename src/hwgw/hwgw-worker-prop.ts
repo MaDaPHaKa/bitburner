@@ -3,9 +3,10 @@ export class HwgwWorkerProp {
   scriptExecTime: number;
   scriptEstimatedEnd: number;
   iteration: number;
-  writePort: number = -1;
+  writePort = -1;
   weakType: 1 | 2 | undefined;
   type: 'BATCH' | 'PREP';
+  debug = false;
   constructor(
     target: string,
     scriptExecTime: number,

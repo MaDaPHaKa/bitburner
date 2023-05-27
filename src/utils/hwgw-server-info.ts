@@ -5,8 +5,8 @@ export class HwgwServerInfo {
   name: string;
   minSecurity: number;
   maxMoney: number;
-  currentSec: number = 100;
-  currentMoney: number = 0;
+  currentSec = 100;
+  currentMoney = 0;
   prepped = false;
   score = -1;
   hwgwScore = -1;

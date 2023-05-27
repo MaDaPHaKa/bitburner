@@ -8,15 +8,16 @@ import { ServerInfo } from 'utils/server-info';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-  const lastScanRun = Date.now();
+  let lastScanRun = Date.now();
   let scanResult: ScanResult = await scan(ns);
   while (true) {
     ns.disableLog('ALL');
     if (Date.now() - lastScanRun > 60000) {
       scanResult = await scan(ns);
+      lastScanRun = Date.now();
     }
     await getStats(ns, scanResult.hackable);
-    await ns.sleep(60000);
+    await ns.sleep(5000);
   }
 }
 

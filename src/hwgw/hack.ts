@@ -8,16 +8,18 @@ export async function main(ns: NS) {
   const sleep = prop.scriptEstimatedEnd - prop.scriptExecTime - Date.now();
   if (sleep >= 0) {
     await ns.hack(prop.target, { additionalMsec: sleep });
-  } else {
+  } else if (prop.debug) {
     warn(ns, `${prop.type} ${prop.target}-${prop.iteration}: hack was ${-sleep} ms too late.`);
   }
   const end = Date.now();
-  info(
-    ns,
-    `${prop.type} ${prop.target}-${prop.iteration}: hack finished at ${end.toString().slice(-6)}/${Math.round(
-      prop.scriptEstimatedEnd
-    )
-      .toString()
-      .slice(-6)}`
-  );
+  if (prop.debug) {
+    info(
+      ns,
+      `${prop.type} ${prop.target}-${prop.iteration}: hack finished at ${end.toString().slice(-6)}/${Math.round(
+        prop.scriptEstimatedEnd
+      )
+        .toString()
+        .slice(-6)}`
+    );
+  }
 }
