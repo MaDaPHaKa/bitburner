@@ -14,8 +14,8 @@ function calcolaTempiBatch(
   tempoHack: number,
   tempoWeak: number,
   tempoGrow: number,
-  iteration: number = 0,
-  scritpDelay: number = 100
+  iteration = 0,
+  scritpDelay = 100
 ) {
   const sleepWeakHack = scritpDelay * iteration * 4;
 
@@ -45,29 +45,31 @@ function calcolaTempiBatch(
 }
 
 function testHackCalc(ns: NS) {
-  let server = ns.getServer('joesguns');
-  const maxMoney = ns.getServer('joesguns').moneyMax;
-  const moneyPerThread = 0.06 * maxMoney;
-  const minWanted = maxMoney * 0.9;
-  const rate = minWanted / moneyPerThread;
-  const threads = Math.max(1, Math.floor(rate));
+  const server = ns.getServer('joesguns');
+  if (server.moneyMax) {
+    const maxMoney = server.moneyMax;
+    const moneyPerThread = 0.06 * maxMoney;
+    const minWanted = maxMoney * 0.9;
+    const rate = minWanted / moneyPerThread;
+    const threads = Math.max(1, Math.floor(rate));
 
-  let WEAKEN_PER_THREAD = ns.weakenAnalyze(1, 1);
-  let HW_THREADS = ns.hackAnalyzeSecurity(1) / WEAKEN_PER_THREAD;
-  let GW_THREADS = ns.growthAnalyzeSecurity(1, undefined, 1) / WEAKEN_PER_THREAD;
-  let hackWeakThreads = Math.max(1, Math.ceil(HW_THREADS * threads));
-  server.moneyAvailable = minWanted;
-  let growThreads = ns.formulas.hacking.growThreads(server, ns.getPlayer(), server.moneyMax, 1);
-  let growWeakThreads = Math.max(1, Math.ceil(GW_THREADS * growThreads));
+    const WEAKEN_PER_THREAD = ns.weakenAnalyze(1, 1);
+    const HW_THREADS = ns.hackAnalyzeSecurity(1) / WEAKEN_PER_THREAD;
+    const GW_THREADS = ns.growthAnalyzeSecurity(1, undefined, 1) / WEAKEN_PER_THREAD;
+    const hackWeakThreads = Math.max(1, Math.ceil(HW_THREADS * threads));
+    server.moneyAvailable = minWanted;
+    const growThreads = ns.formulas.hacking.growThreads(server, ns.getPlayer(), server.moneyMax, 1);
+    const growWeakThreads = Math.max(1, Math.ceil(GW_THREADS * growThreads));
 
-  ns.print('max money: ', maxMoney);
-  ns.print('hackthread ', threads);
-  ns.print('hackWeakThreads ', hackWeakThreads);
-  ns.print('growThreads ', growThreads);
-  ns.print('growWeakThreads ', growWeakThreads);
-  ns.print('GW_THREADS ', GW_THREADS);
-  ns.print('HW_THREADS ', HW_THREADS);
-  ns.print('WEAKEN_PER_THREAD ', WEAKEN_PER_THREAD);
-  ns.print('ns.hackAnalyzeSecurity(1) ', ns.hackAnalyzeSecurity(1));
-  ns.print("ns.growthAnalyzeSecurity(1, 'joesguns', 1) ", ns.growthAnalyzeSecurity(1, undefined, 1));
+    ns.print('max money: ', maxMoney);
+    ns.print('hackthread ', threads);
+    ns.print('hackWeakThreads ', hackWeakThreads);
+    ns.print('growThreads ', growThreads);
+    ns.print('growWeakThreads ', growWeakThreads);
+    ns.print('GW_THREADS ', GW_THREADS);
+    ns.print('HW_THREADS ', HW_THREADS);
+    ns.print('WEAKEN_PER_THREAD ', WEAKEN_PER_THREAD);
+    ns.print('ns.hackAnalyzeSecurity(1) ', ns.hackAnalyzeSecurity(1));
+    ns.print("ns.growthAnalyzeSecurity(1, 'joesguns', 1) ", ns.growthAnalyzeSecurity(1, undefined, 1));
+  }
 }

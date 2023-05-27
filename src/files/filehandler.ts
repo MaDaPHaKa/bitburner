@@ -1,10 +1,10 @@
 import { NS } from '@ns';
 
 export class FileHandler {
-  #file: any;
+  #file: string;
   #ns: NS;
 
-  constructor(ns: NS, file: any) {
+  constructor(ns: NS, file: string) {
     this.#ns = ns;
     this.#file = file;
   }
@@ -22,7 +22,7 @@ export class FileHandler {
   }
 
   read() {
-    let dataString = this.#ns.read(this.#file);
+    const dataString = this.#ns.read(this.#file);
     if (dataString.length > 1) {
       return JSON.parse(dataString);
     } else {

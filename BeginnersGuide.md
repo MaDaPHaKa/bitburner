@@ -1,3 +1,5 @@
+# THIS DOC IS NOT MINE: cloned from https://github.com/bitburner-official/typescript-template
+
 # Step by step guide to setting up the Typescript template from scratch
 This guide is mostly focused on Windows users (Mac instructions are given at some places).
 If you're a Linux/Mac/Other user, there's an expectancy that you know your system and it's peculiarities compared to Windows.

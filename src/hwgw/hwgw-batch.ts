@@ -5,12 +5,15 @@ import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from 'utils/server-data';
 
 export class HwgwBatch {
+  target: string;
   tempoHack: number;
   tempoWeak: number;
   tempoGrow: number;
+  endTime = -1;
   running = false;
 
-  constructor(tempoHack: number, tempoWeak: number, tempoGrow: number) {
+  constructor(target: string, tempoHack: number, tempoWeak: number, tempoGrow: number) {
+    this.target = target;
     this.tempoGrow = tempoGrow;
     this.tempoHack = tempoHack;
     this.tempoWeak = tempoWeak;

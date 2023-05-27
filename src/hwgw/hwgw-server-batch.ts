@@ -58,7 +58,6 @@ export class HwgwServerBatch {
     this.weakHackEndTime = Date.now() + this.weakTime + this.scriptDelay * 2 + buffer;
     this.growEndTime = Date.now() + this.weakTime + this.scriptDelay * 3 + buffer;
     this.weakGrowEndTime = Date.now() + this.weakTime + this.scriptDelay * 4 + buffer;
-
     this.calcolaThreads(ns, calc, target);
     this.verificaServerCap(ns, calc, target);
   }

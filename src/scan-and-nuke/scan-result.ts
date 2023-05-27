@@ -12,7 +12,7 @@ export class ScanResult {
   }
 
   scanAndCheckNetwork(): void {
-    let device = 'home';
+    const device = 'home';
     this.scan(device);
   }
 
@@ -31,7 +31,7 @@ export class ScanResult {
         if (canHack && profitable) this.hackable.push(newDevice);
       }
     });
-    for (let target of localTargets) {
+    for (const target of localTargets) {
       this.scan(target, depth + 1);
     }
     return;
@@ -60,12 +60,10 @@ export class ScanResult {
       cracks.push(ns.sqlinject);
     }
     if (portRequired > cracks.length) {
-      ns.print('cannot crack ', target);
       return false;
     }
-    for (let crack of cracks) crack(target);
+    for (const crack of cracks) crack(target);
     // Get root access to target server
-    ns.print('cracked ', target);
     ns.nuke(target);
     return true;
   }

@@ -79,7 +79,6 @@ export class HwgOpsCalulator {
     }
   }
 
-  // SPOSTARE
   calcolaHackPerc() {
     if (this.hasFormulas) {
       return this.ns.formulas.hacking.hackPercent(this.targetServer, this.ns.getPlayer());

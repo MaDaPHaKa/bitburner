@@ -1,5 +1,5 @@
 import { NS } from '@ns';
-import { BEGINNER_MANAGER_NAME, GET_INFO_NAME, SCAN_SCRIPT_NAME } from 'const/scripts';
+import { BEGINNER_MANAGER_NAME, SCAN_SCRIPT_NAME } from 'const/scripts';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

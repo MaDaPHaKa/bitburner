@@ -4,7 +4,7 @@ import { FILES_TO_COPY } from 'const/scripts';
 /** @param {NS} ns */
 export async function main(ns: NS) {
   const servers = ns.getPurchasedServers();
-  for (let server of servers) {
+  for (const server of servers) {
     ns.scp(FILES_TO_COPY, server);
   }
 }

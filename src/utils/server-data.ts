@@ -26,4 +26,9 @@ export class ServerData {
     if (this.name == 'home') this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name) - HOME_FREE_RAM_TO_KEEP;
     else this.freeRam = this.maxRam - this.ns.getServerUsedRam(this.name);
   }
+
+  getMaxRam() {
+    if (this.name == 'home') return this.maxRam - HOME_FREE_RAM_TO_KEEP;
+    return this.maxRam;
+  }
 }

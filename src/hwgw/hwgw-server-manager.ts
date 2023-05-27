@@ -9,7 +9,6 @@ import { WgwBatch } from 'hwgw/wgw-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from 'utils/server-data';
-import { LOG_MANAGER_PORT } from '/const/ports';
 
 export class HwgwServerManager {
   ns: NS;
@@ -76,12 +75,14 @@ export class HwgwServerManager {
         serverBatch.growThreads,
         ...serverBatch.getGrowArgs(randomArg)
       );
-
-      const growWeakArgs =
-        i == serverBatches.length - 1
-          ? serverBatch.getGrowWeakArgs(randomArg, portSeed)
-          : serverBatch.getGrowWeakArgs(randomArg);
+      const lastBatch = i == serverBatches.length - 1;
+      const growWeakArgs = lastBatch
+        ? serverBatch.getGrowWeakArgs(randomArg, portSeed)
+        : serverBatch.getGrowWeakArgs(randomArg);
       this.ns.exec(HWGW_SERVER_WEAKEN_SCRIPT, serverBatch.server.name, serverBatch.growWeakThreads, ...growWeakArgs);
+      if (lastBatch) {
+        batch.endTime = serverBatch.weakGrowEndTime;
+      }
       await this.ns.sleep(1);
     }
     return true;
