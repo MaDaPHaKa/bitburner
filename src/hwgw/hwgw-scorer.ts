@@ -3,7 +3,6 @@ import { HwgwBatchScorer } from 'hwgw/hwgw-batch-scorer';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
 import { ServerData } from 'utils/server-data';
-import { info } from '/logs/logger';
 
 export class HwgwScorer {
   target: string;

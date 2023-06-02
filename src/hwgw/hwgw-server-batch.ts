@@ -6,6 +6,7 @@ import {
   HWGW_MONEY_MIN_PERCENTAGE,
   HWGW_MONEY_PERCENTAGE,
   H_COST,
+  SCRIPT_DELAY,
   WG_COST,
 } from 'const/hwgw';
 import { HWGW_PORT_1, HWGW_PORT_2, HWGW_PORT_3, HWGW_PORT_4 } from 'const/ports';
@@ -42,7 +43,7 @@ export class HwgwServerBatch {
     target: HwgwServerInfo,
     calc: HwgOpsCalulator,
     iteration = 0,
-    scriptDelay = 20
+    scriptDelay = SCRIPT_DELAY
   ) {
     this.target = target;
     this.server = server;

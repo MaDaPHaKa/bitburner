@@ -66,7 +66,7 @@ export async function main(ns: NS) {
     await prepServers(ns, toPrep, preppin, serverManager);
     batches = await batch(ns, toBatch, batches, serverManager);
     if (batches.length > 0) {
-      const wait = Math.max(1, batches.sort((a, b) => a.endTime - b.endTime)[0].endTime - Date.now() + 10);
+      const wait = Math.max(1, batches.sort((a, b) => a.endTime - b.endTime)[0].endTime - Date.now() + 5);
       await ns.sleep(wait);
     } else {
       await ns.sleep(2000);

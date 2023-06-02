@@ -1,4 +1,5 @@
 import { NS } from '@ns';
+import { SCRIPT_DELAY } from 'const/hwgw';
 import { HwgwServerBatch } from 'hwgw/hwgw-server-batch';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
@@ -25,7 +26,7 @@ export class HwgwBatch {
     target: HwgwServerInfo,
     calc: HwgOpsCalulator,
     iteration = 0,
-    scriptDelay = 20
+    scriptDelay = SCRIPT_DELAY
   ): HwgwServerBatch {
     return new HwgwServerBatch(
       this.tempoHack,
