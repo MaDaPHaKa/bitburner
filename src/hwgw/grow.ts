@@ -8,7 +8,7 @@ export async function main(ns: NS) {
   const sleep = prop.scriptEstimatedEnd - prop.scriptExecTime - Date.now();
   if (sleep >= 0) {
     await ns.grow(prop.target, { additionalMsec: sleep });
-  } else if (prop.debug) {
+  } else if (prop.debugWarn) {
     warn(ns, `${prop.type} ${prop.target}-${prop.iteration}: grow was ${-sleep} ms too late.`);
   }
   const end = Date.now();

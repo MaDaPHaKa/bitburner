@@ -1,5 +1,6 @@
 // PORTS CONSTANTS
 export const LOG_MANAGER_PORT = 1;
+export const HWGW_COMMON_PORT = 300;
 export const HWGW_PORT_1 = 100;
 export const HWGW_PORT_2 = 101;
 export const HWGW_PORT_3 = 102;

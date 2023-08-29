@@ -7,6 +7,7 @@ export class HwgwWorkerProp {
   weakType: 1 | 2 | undefined;
   type: 'BATCH' | 'PREP';
   debug = false;
+  debugWarn = true;
   constructor(
     target: string,
     scriptExecTime: number,

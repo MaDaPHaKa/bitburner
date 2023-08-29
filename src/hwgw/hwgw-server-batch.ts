@@ -9,7 +9,7 @@ import {
   SCRIPT_DELAY,
   WG_COST,
 } from 'const/hwgw';
-import { HWGW_PORT_1, HWGW_PORT_2, HWGW_PORT_3, HWGW_PORT_4 } from 'const/ports';
+import { HWGW_COMMON_PORT } from 'const/ports';
 import { HwgwWorkerProp } from 'hwgw/hwgw-worker-prop';
 import { HwgOpsCalulator } from 'utils/hwg-ops-calulator';
 import { HwgwServerInfo } from 'utils/hwgw-server-info';
@@ -107,12 +107,12 @@ export class HwgwServerBatch {
     );
     prop.weakType = 2;
     if (portSeed > 0) {
-      let port: number;
-      if (portSeed % 4 == 0) port = HWGW_PORT_4;
-      if (portSeed % 3 == 0) port = HWGW_PORT_3;
-      if (portSeed % 2 == 0) port = HWGW_PORT_2;
-      else port = HWGW_PORT_1;
-      prop.writePort = port;
+      // let port: number;
+      // if (portSeed % 4 == 0) port = HWGW_PORT_4;
+      // if (portSeed % 3 == 0) port = HWGW_PORT_3;
+      // if (portSeed % 2 == 0) port = HWGW_PORT_2;
+      // else port = HWGW_PORT_1;
+      prop.writePort = HWGW_COMMON_PORT;
     }
     return [JSON.stringify(prop), randomArg];
   }

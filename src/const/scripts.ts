@@ -14,6 +14,7 @@ export const HWGW_SERVER_WEAKEN_SCRIPT = '/hwgw/weak.js';
 export const HWGW_SERVER_GROW_SCRIPT = '/hwgw/grow.js';
 export const HWGW_SERVER_HACK_SCRIPT = '/hwgw/hack.js';
 export const HWGW_WORKER_PROP = '/hwgw/hwgw-worker-prop.js';
+export const HWGW_WORKER_RES = '/hwgw/hwgw-res.js';
 export const CONST_PORTS = '/const/ports.js';
 export const LOGGER = '/logs/logger.js';
 export const FILES_TO_COPY = [
@@ -24,6 +25,7 @@ export const FILES_TO_COPY = [
   XP_FARM_SCRIPT_NAME,
   MYSELF,
   HWGW_WORKER_PROP,
+  HWGW_WORKER_RES,
   CONST_PORTS,
   LOGGER,
 ];
